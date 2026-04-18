@@ -361,3 +361,36 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# =========================
+# Python / FastAPI (MARKIT)
+# =========================
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Variables de entorno (MUY IMPORTANTE)
+.env
+.env.*
+
+# Archivos Python compilados
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs
+*.log
+
+# SQLite (por si usas local)
+*.sqlite3
+
+# VSCode (si usas)
+.vscode/
+
+# Mac / Windows basura
+.DS_Store
+Thumbs.db
