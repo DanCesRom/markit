@@ -1,0 +1,111 @@
+{
+  "dumped_at": "20260211_234718",
+  "summary": [
+    {
+      "url_key": "bebe",
+      "name": "Bebé",
+      "total_count": 500,
+      "items_count": 500,
+      "total_pages": 9
+    },
+    {
+      "url_key": "bebidas",
+      "name": "Bebidas",
+      "total_count": 731,
+      "items_count": 731,
+      "total_pages": 13
+    },
+    {
+      "url_key": "carnes-pescados-y-mariscos",
+      "name": "Carnes, Pescados y Mariscos",
+      "total_count": 509,
+      "items_count": 509,
+      "total_pages": 9
+    },
+    {
+      "url_key": "cervezas-vinos-y-licores",
+      "name": "Cervezas, Vinos y Licores",
+      "total_count": 1154,
+      "items_count": 1154,
+      "total_pages": 20
+    },
+    {
+      "url_key": "complementos-del-hogar",
+      "name": "Complementos del Hogar",
+      "total_count": 325,
+      "items_count": 325,
+      "total_pages": 6
+    },
+    {
+      "url_key": "congelados",
+      "name": "Congelados",
+      "total_count": 391,
+      "items_count": 391,
+      "total_pages": 7
+    },
+    {
+      "url_key": "despensa",
+      "name": "Despensa",
+      "total_count": 5372,
+      "items_count": 5372,
+      "total_pages": 90
+    },
+    {
+      "url_key": "frutas-y-vegetales",
+      "name": "Frutas y Vegetales",
+      "total_count": 312,
+      "items_count": 312,
+      "total_pages": 6
+    },
+    {
+      "url_key": "lacteos-y-huevos",
+      "name": "Lácteos y Huevos",
+      "total_count": 639,
+      "items_count": 639,
+      "total_pages": 11
+    },
+    {
+      "url_key": "limpieza-y-desechables",
+      "name": "Limpieza y Desechables",
+      "total_count": 1595,
+      "items_count": 1595,
+      "total_pages": 27
+    },
+    {
+      "url_key": "mascotas",
+      "name": "Mascotas",
+      "total_count": 276,
+      "items_count": 276,
+      "total_pages": 5
+    },
+    {
+      "url_key": "panaderia-y-reposteria",
+      "name": "Panadería y Repostería",
+      "total_count": 487,
+      "items_count": 487,
+      "total_pages": 9
+    },
+    {
+      "url_key": "platos-preparados",
+      "name": "Platos Preparados",
+      "total_count": 14,
+      "items_count": 14,
+      "total_pages": 1
+    },
+    {
+      "url_key": "quesos-y-embutidos",
+      "name": "Quesos y Embutidos",
+      "total_count": 922,
+      "items_count": 922,
+      "total_pages": 16
+    },
+    {
+      "url_key": "salud-y-belleza",
+      "name": "Salud y Belleza",
+      "total_count": 1777,
+      "items_count": 1777,
+      "total_pages": 30
+    }
+  ],
+  "merged_unique_count": 14876
+}

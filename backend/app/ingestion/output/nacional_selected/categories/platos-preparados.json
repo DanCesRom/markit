@@ -1,0 +1,438 @@
+{
+  "source": "nacional",
+  "dumped_at": "20260211_234718",
+  "category": {
+    "url_key": "platos-preparados",
+    "id": 8,
+    "uid": "OA==",
+    "name": "Platos Preparados"
+  },
+  "products": {
+    "total_count": 14,
+    "total_pages": 1,
+    "page_size": 60,
+    "items_count": 14,
+    "items": [
+      {
+        "id": 10892,
+        "sku": "2176505",
+        "name": "Pollo Horneado Tradicional",
+        "url_key": "pollo-horneado-tradicional-2176505",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2176505-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2176505-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 424.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 424.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10893,
+        "sku": "2176506",
+        "name": "Pollo Horneado con Limón y Pimienta",
+        "url_key": "pollo-horneado-con-limon-y-pimienta-2176506",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2176506-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2176506-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 439.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 439.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 23160,
+        "sku": "2099825",
+        "name": "Carnes Cocina Sancocho Mixto LB",
+        "url_key": "carnes-cocina-sancocho-mixto-lb-2099825",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/0/2099825-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/0/2099825-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 179.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 179.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 21035,
+        "sku": "2136353",
+        "name": "Guineitos Sancochados Paq 3 Und",
+        "url_key": "guineitos-sancochados-paq-3-und-2136353",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2136353-1.png?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width=&format=jpeg"
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2136353-1.png?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width=&format=jpeg"
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 69.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 69.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 13578,
+        "sku": "2135986",
+        "name": "Pastelon De Platano Maduro Con Queso Pequeño",
+        "url_key": "pastelon-de-platano-maduro-con-queso-pequeno-2135986",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2135986-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2135986-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 189.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 189.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 13446,
+        "sku": "2136170",
+        "name": "Lasaña Boloñesa Pequeña Empacada",
+        "url_key": "lasana-bolonesa-pequena-empacada-2136170",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2136170-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2136170-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 199.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 199.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 13064,
+        "sku": "2006237",
+        "name": "Pechuga De Pollo A La Plancha, Lb",
+        "url_key": "pechuga-de-pollo-a-la-plancha-lb-2006237",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/0/2006237-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/0/2006237-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 264.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 264.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10801,
+        "sku": "2139649",
+        "name": "Lasaña De Pollo Pequeña Empacada Cafeteria",
+        "url_key": "lasana-de-pollo-pequena-empacada-cafeteria-2139649",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2139649-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2139649-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 199.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 199.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10612,
+        "sku": "2006246",
+        "name": "Pierna De Cerdo Asada, Lb",
+        "url_key": "pierna-de-cerdo-asada-lb-2006246",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/0/2006246-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/0/2006246-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 384.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 384.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10591,
+        "sku": "2151903",
+        "name": "Ensalada De Tipile",
+        "url_key": "ensalada-de-tipile-2151903",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2151903-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2151903-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 79.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 79.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10588,
+        "sku": "2137181",
+        "name": "Ensalada Capresa Pequeña",
+        "url_key": "ensalada-capresa-pequena-2137181",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2137181-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2137181-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 149.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 149.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10054,
+        "sku": "2160801",
+        "name": "Pastelon De Platano Maduro Con Carne Pequeño",
+        "url_key": "pastelon-de-platano-maduro-con-carne-pequeno-2160801",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2160801-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2160801-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 189.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 189.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10023,
+        "sku": "2154582",
+        "name": "Cielito Lindo Pequeño",
+        "url_key": "cielito-lindo-pequeno-2154582",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2154582-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2154582-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 224.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 224.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 136,
+        "sku": "2134532",
+        "name": "Alitas Con Bbq 6 Und/Paq",
+        "url_key": "alitas-con-bbq-6-und-paq-2134532",
+        "url_suffix": "",
+        "stock_status": "OUT_OF_STOCK",
+        "small_image": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2134532-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "thumbnail": {
+          "url": "https://supermercadosnacional.com/media/catalog/product/2/1/2134532-1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width="
+        },
+        "price_range": {
+          "minimum_price": {
+            "regular_price": {
+              "value": 149.95,
+              "currency": "DOP"
+            },
+            "final_price": {
+              "value": 149.95,
+              "currency": "DOP"
+            },
+            "discount": {
+              "amount_off": 0,
+              "percent_off": 0
+            }
+          }
+        }
+      }
+    ]
+  }
+}

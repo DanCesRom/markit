@@ -1,0 +1,48 @@
+{
+  "dumped_at": "20260211_234626",
+  "summary": [
+    {
+      "slug": "alimentacion",
+      "category": "Alimentación",
+      "total_reported": 4976,
+      "items_count": 4976
+    },
+    {
+      "slug": "bebes-",
+      "category": "Bebés ",
+      "total_reported": 1017,
+      "items_count": 1017
+    },
+    {
+      "slug": "bebidas",
+      "category": "Bebidas",
+      "total_reported": 1110,
+      "items_count": 1110
+    },
+    {
+      "slug": "cuidado-personal-y-belleza",
+      "category": "Cuidado Personal y Belleza",
+      "total_reported": 7828,
+      "items_count": 7828
+    },
+    {
+      "slug": "frutas-y-vegetales",
+      "category": "Frutas y Vegetales",
+      "total_reported": 294,
+      "items_count": 294
+    },
+    {
+      "slug": "limpieza-",
+      "category": "Limpieza ",
+      "total_reported": 1279,
+      "items_count": 1279
+    },
+    {
+      "slug": "salud-bienestar",
+      "category": "Salud & Bienestar",
+      "total_reported": 120,
+      "items_count": 120
+    }
+  ],
+  "merged_unique_count": 16434
+}

@@ -1,0 +1,755 @@
+{
+  "data": {
+    "list": [
+      {
+        "idSeccion": 3,
+        "idexternoSeccion": "CAT_AGE_000",
+        "nombreSeccion": "Alimentación general",
+        "mantenerSeccion": true,
+        "ordenSeccion": 4,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 3,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Alimentación general"
+          }
+        ]
+      },
+      {
+        "idSeccion": 4,
+        "idexternoSeccion": "CAT_ARC_000",
+        "nombreSeccion": "Arca",
+        "mantenerSeccion": true,
+        "ordenSeccion": 44,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 4,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Arca"
+          }
+        ]
+      },
+      {
+        "idSeccion": 5,
+        "idexternoSeccion": "CAT_BBB_000",
+        "nombreSeccion": "Bebés",
+        "mantenerSeccion": true,
+        "ordenSeccion": 5,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 5,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Bebés"
+          }
+        ]
+      },
+      {
+        "idSeccion": 7,
+        "idexternoSeccion": "CAT_BOG_000",
+        "nombreSeccion": "Bodega 3X2",
+        "mantenerSeccion": true,
+        "ordenSeccion": 6,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 7,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Bodega 3X2"
+          }
+        ]
+      },
+      {
+        "idSeccion": 8,
+        "idexternoSeccion": "CAT_CER_000",
+        "nombreSeccion": "Cereales",
+        "mantenerSeccion": true,
+        "ordenSeccion": 8,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 8,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Cereales"
+          }
+        ]
+      },
+      {
+        "idSeccion": 9,
+        "idexternoSeccion": "CAT_CON_000",
+        "nombreSeccion": "Congelados",
+        "mantenerSeccion": true,
+        "ordenSeccion": 11,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 9,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Congelados"
+          }
+        ]
+      },
+      {
+        "idSeccion": 11,
+        "idexternoSeccion": "CAT_EMB_000",
+        "nombreSeccion": "Embutidos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 14,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 11,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Embutidos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 12,
+        "idexternoSeccion": "CAT_ESP_000",
+        "nombreSeccion": "Especias",
+        "mantenerSeccion": true,
+        "ordenSeccion": 16,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 12,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Especias"
+          }
+        ]
+      },
+      {
+        "idSeccion": 13,
+        "idexternoSeccion": "CAT_FYV_000",
+        "nombreSeccion": "Frutas y vegetales",
+        "mantenerSeccion": true,
+        "ordenSeccion": 17,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 13,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Frutas y vegetales"
+          }
+        ]
+      },
+      {
+        "idSeccion": 14,
+        "idexternoSeccion": "CAT_GRA_000",
+        "nombreSeccion": "Granos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 18,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 14,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Granos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 15,
+        "idexternoSeccion": "CAT_HOL_000",
+        "nombreSeccion": "Hogar y limpieza",
+        "mantenerSeccion": true,
+        "ordenSeccion": 20,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 15,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Hogar y limpieza"
+          }
+        ]
+      },
+      {
+        "idSeccion": 16,
+        "idexternoSeccion": "CAT_HYS_000",
+        "nombreSeccion": "Higiene y salud",
+        "mantenerSeccion": true,
+        "ordenSeccion": 19,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 16,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Higiene y salud"
+          }
+        ]
+      },
+      {
+        "idSeccion": 17,
+        "idexternoSeccion": "CAT_LAC_000",
+        "nombreSeccion": "Lácteos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 22,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 17,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Lácteos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 18,
+        "idexternoSeccion": "CAT_PAN_000",
+        "nombreSeccion": "Panes y galletas",
+        "mantenerSeccion": true,
+        "ordenSeccion": 23,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 18,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Panes y galletas"
+          }
+        ]
+      },
+      {
+        "idSeccion": 19,
+        "idexternoSeccion": "CAT_VIV_000",
+        "nombreSeccion": "Víveres",
+        "mantenerSeccion": true,
+        "ordenSeccion": 29,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 19,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Víveres"
+          }
+        ]
+      },
+      {
+        "idSeccion": 20,
+        "idexternoSeccion": "CAT_VSA_000",
+        "nombreSeccion": "Vida sana",
+        "mantenerSeccion": true,
+        "ordenSeccion": 28,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 20,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Vida sana"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1016,
+        "idexternoSeccion": "CAT_PAS_000",
+        "nombreSeccion": "Pasta",
+        "mantenerSeccion": true,
+        "ordenSeccion": 24,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1016,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Pasta"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1017,
+        "idexternoSeccion": "CAT_SAL_000",
+        "nombreSeccion": "Salsa y aderezos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 27,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1017,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Salsa y aderezos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1018,
+        "idexternoSeccion": "CAT_ENL_000",
+        "nombreSeccion": "Enlatados",
+        "mantenerSeccion": true,
+        "ordenSeccion": 15,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1018,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Enlatados"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1019,
+        "idexternoSeccion": "CAT_MEX_000",
+        "nombreSeccion": "Comida mexicana",
+        "mantenerSeccion": true,
+        "ordenSeccion": 10,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1019,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Comida mexicana"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1020,
+        "idexternoSeccion": "CAT_DUL_000",
+        "nombreSeccion": "Dulces y caramelos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 13,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1020,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Dulces y caramelos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1021,
+        "idexternoSeccion": "CAT_ACE_000",
+        "nombreSeccion": "Aceitunas y encurtidos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 5,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1021,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Aceitunas y encurtidos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1022,
+        "idexternoSeccion": "CAT_POL_000",
+        "nombreSeccion": "Pollo y aves",
+        "mantenerSeccion": true,
+        "ordenSeccion": 26,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1022,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Pollo y aves"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1023,
+        "idexternoSeccion": "CAT_RES_000",
+        "nombreSeccion": "Carnes",
+        "mantenerSeccion": true,
+        "ordenSeccion": 7,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1023,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Carnes"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1024,
+        "idexternoSeccion": "CAT_CPM_000",
+        "nombreSeccion": "Pescados y mariscos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 25,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1024,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Pescados y mariscos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1025,
+        "idexternoSeccion": "CAT_BEB_000",
+        "nombreSeccion": "Agua y refrescos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 3,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1025,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Agua y refrescos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1026,
+        "idexternoSeccion": "CAT_JUG_000",
+        "nombreSeccion": "Jugos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 21,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1026,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Jugos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1031,
+        "idexternoSeccion": "GCP_ACE_000",
+        "nombreSeccion": "Aceites y vinagres",
+        "mantenerSeccion": true,
+        "ordenSeccion": 4,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1031,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Aceites y vinagres"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1045,
+        "idexternoSeccion": "CAT_ARC_004",
+        "nombreSeccion": "Alimentos otras mascotas",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 30,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1045,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Alimentos otras mascotas"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1046,
+        "idexternoSeccion": "CAT_ARC_006",
+        "nombreSeccion": "Higiene felinos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 31,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1046,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Higiene felinos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1047,
+        "idexternoSeccion": "CAT_ARC_010",
+        "nombreSeccion": "Higiene caninos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 32,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1047,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Higiene caninos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1048,
+        "idexternoSeccion": "CAT_ARC_012",
+        "nombreSeccion": "Salud y bienestar",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 33,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1048,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Salud y bienestar"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1049,
+        "idexternoSeccion": "CAT_ARC_013",
+        "nombreSeccion": "Pro Plan caninos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 2,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1049,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Pro Plan caninos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1050,
+        "idexternoSeccion": "CAT_ARC_014",
+        "nombreSeccion": "Accesorios felinos y otros",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 35,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1050,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Accesorios felinos y otros"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1051,
+        "idexternoSeccion": "CAT_ARC_015",
+        "nombreSeccion": "Alimentos felinos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 4,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1051,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Alimentos felinos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1052,
+        "idexternoSeccion": "CAT_ARC_016",
+        "nombreSeccion": "Royal Canin caninos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 1,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1052,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Royal Canin caninos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1053,
+        "idexternoSeccion": "CAT_ARC_018",
+        "nombreSeccion": "Accesorios caninos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 38,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1053,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Accesorios caninos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1054,
+        "idexternoSeccion": "CAT_ARC_019",
+        "nombreSeccion": "Treats caninos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 39,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1054,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Treats caninos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1055,
+        "idexternoSeccion": "CAT_ARC_021",
+        "nombreSeccion": "Taste of the Wild caninos",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 0,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1055,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Taste of the Wild caninos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1056,
+        "idexternoSeccion": "CAT_CCA_000",
+        "nombreSeccion": "Comida mascotas",
+        "mantenerSeccion": true,
+        "ordenSeccion": 41,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1056,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Comida mascotas"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1065,
+        "idexternoSeccion": "CAT_DES_000",
+        "nombreSeccion": "Desechables",
+        "mantenerSeccion": true,
+        "ordenSeccion": 12,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1065,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Desechables"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1093,
+        "idexternoSeccion": "CAT_PIC_000",
+        "nombreSeccion": "Picaderas, Snacks, Chips",
+        "mantenerSeccion": true,
+        "ordenSeccion": 5,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1093,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Picaderas, Snacks, Chips"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1094,
+        "idexternoSeccion": "CAT_ARC_022",
+        "nombreSeccion": "Acuario",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 200,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1094,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Acuario"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1095,
+        "idexternoSeccion": "CAT_CAF_000",
+        "nombreSeccion": "Cafetería Bravo",
+        "mantenerSeccion": true,
+        "ordenSeccion": 5,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1095,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Cafetería Bravo"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1096,
+        "idexternoSeccion": "CAT_PRO_000",
+        "nombreSeccion": "PROMOCIÓN 3X2 (DEBES PEDIR 3)",
+        "mantenerSeccion": true,
+        "ordenSeccion": 1,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1096,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "PROMOCIÓN 3X2 (DEBES PEDIR 3)"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1097,
+        "idexternoSeccion": "CAT_PRO_001",
+        "nombreSeccion": "PROMOCION 2X1 (DEBES PEDIR 2)",
+        "mantenerSeccion": true,
+        "ordenSeccion": 2,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1097,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "PROMOCION 2X1 (DEBES PEDIR 2)"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1098,
+        "idexternoSeccion": "CAT_NUEVO_001",
+        "nombreSeccion": "Productos Nuevos",
+        "mantenerSeccion": true,
+        "ordenSeccion": 0,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1098,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "Productos Nuevos"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1108,
+        "idexternoSeccion": "ARC_OFERTAS_000",
+        "nombreSeccion": "OFERTAS",
+        "padreSeccion": 4,
+        "mantenerSeccion": true,
+        "ordenSeccion": 0,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1108,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "OFERTAS"
+          }
+        ]
+      },
+      {
+        "idSeccion": 1114,
+        "idexternoSeccion": "CAT_ARC_017",
+        "nombreSeccion": "CAT_ARC_017",
+        "mantenerSeccion": false,
+        "ordenSeccion": 0,
+        "estadoSeccion": true,
+        "associatedI18n": [
+          {
+            "idSeccionSeccionI18n": 1114,
+            "idI18nSeccionI18n": 1,
+            "nombreSeccionI18n": "CAT_ARC_017"
+          }
+        ]
+      }
+    ],
+    "totalCount": 49
+  }
+}

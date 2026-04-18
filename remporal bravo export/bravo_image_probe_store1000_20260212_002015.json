@@ -1,0 +1,735 @@
+{
+  "input": "backend\\app\\ingestion\\dumps\\bravo_articles_store1000_ALL_DEDUP_20260212_000047.json",
+  "templates": [
+    "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+    "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+    "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}"
+  ],
+  "results": [
+    {
+      "idArticulo": 30154,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=30154&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=30154&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/30154?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 1661,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 2,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=1661&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=1661&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/1661?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 4436,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=4436&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=4436&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/4436?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 1966,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=1966&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=1966&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/1966?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 6607,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=6607&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=6607&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/6607?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 10234,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=10234&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=10234&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/10234?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 19502,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=19502&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=19502&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/19502?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 21352,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=21352&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=21352&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/21352?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 24974,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=24974&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=24974&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/24974?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 1389,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 2,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=1389&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=1389&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/1389?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 5685,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 2,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=5685&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=5685&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/5685?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 22903,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=22903&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=22903&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/22903?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 2222,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=2222&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=2222&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/2222?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 7420,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=7420&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=7420&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/7420?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 22859,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=22859&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=22859&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/22859?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 7556,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=7556&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=7556&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/7556?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 6655,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=6655&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=6655&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/6655?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 2401,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=2401&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=2401&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/2401?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 29866,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 2,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=29866&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=29866&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/29866?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 2117,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 2,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=2117&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=2117&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/2117?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 8481,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=8481&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=8481&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/8481?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 1387,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 2,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=1387&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=1387&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/1387?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 17265,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=17265&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=17265&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/17265?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 19031,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 1,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=19031&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=19031&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/19031?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    },
+    {
+      "idArticulo": 27722,
+      "imageCatalogVersion": "9",
+      "nimgArticulo": 3,
+      "tested": [
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/image?idArticulo=27722&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo={idArticulo}&v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/articulo/imagen?idArticulo=27722&v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        },
+        {
+          "template": "https://bravova-api.superbravo.com.do/public/image/articulo/{idArticulo}?v={imageCatalogVersion}&n={n}",
+          "url": "https://bravova-api.superbravo.com.do/public/image/articulo/27722?v=9&n=1",
+          "ok": false,
+          "code": 404,
+          "contentType": "text/html;charset=utf-8"
+        }
+      ],
+      "best": null
+    }
+  ]
+}
