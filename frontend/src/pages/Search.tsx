@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { apiPost } from "../lib/api";
 
@@ -198,6 +198,29 @@ function getPreviewLabel(productName: string) {
   return parts.slice(0, 3).join(" ");
 }
 
+function looksLikeRecipeQuery(text: string) {
+  const value = text.toLowerCase();
+  return [
+    "receta",
+    "quiero hacer",
+    "quiero cocinar",
+    "cómo hacer",
+    "como hacer",
+    "cocinar",
+    "sancocho",
+    "mangú",
+    "mangu",
+    "mofongo",
+    "lasaña",
+    "lasaña",
+    "pastelón",
+    "pastelon",
+    "asopao",
+    "locro",
+    "moro",
+  ].some((x) => value.includes(x));
+}
+
 function SearchTopBar(props: {
   value: string;
   onChange: (v: string) => void;
@@ -210,10 +233,10 @@ function SearchTopBar(props: {
         e.preventDefault();
         props.onSubmit();
       }}
-      className="sticky top-0 z-10 -mx-4 border-b border-zinc-100 bg-[#fafafa]/95 px-4 pb-3 pt-2 backdrop-blur"
+      className="sticky top-0 z-20 -mx-4 border-b border-zinc-100 bg-[#fafafa]/95 px-4 pb-3 pt-2 backdrop-blur"
     >
       <div className="flex items-center gap-3">
-        <div className="flex flex-1 items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+        <div className="flex flex-1 items-center gap-3 rounded-[22px] border border-zinc-200 bg-white px-4 py-3 shadow-sm transition focus-within:border-emerald-600 focus-within:ring-4 focus-within:ring-emerald-100">
           <span className="text-zinc-400">⌕</span>
           <input
             value={props.value}
@@ -227,7 +250,7 @@ function SearchTopBar(props: {
         <button
           type="submit"
           disabled={props.loading}
-          className="rounded-2xl bg-black px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          className="rounded-[22px] bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:opacity-60"
         >
           {props.loading ? "..." : "Buscar"}
         </button>
@@ -239,7 +262,7 @@ function SearchTopBar(props: {
 function ProductImage(props: { src?: string; alt: string; size?: string }) {
   return (
     <div
-      className={`grid shrink-0 place-items-center overflow-hidden rounded-2xl bg-zinc-100 ${
+      className={`grid shrink-0 place-items-center overflow-hidden rounded-[22px] bg-zinc-100 ${
         props.size ?? "h-20 w-20"
       }`}
     >
@@ -247,13 +270,73 @@ function ProductImage(props: { src?: string; alt: string; size?: string }) {
         <img
           src={props.src}
           alt={props.alt}
-          className="max-h-full max-w-full object-contain p-2"
+          className="h-full w-full object-contain p-2"
           loading="lazy"
           draggable={false}
         />
       ) : (
         <span className="text-2xl">🛒</span>
       )}
+    </div>
+  );
+}
+
+function SearchSectionHeader(props: {
+  title: string;
+  subtitle?: string;
+  badge?: string;
+}) {
+  return (
+    <div className="px-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="text-[30px] font-semibold leading-none text-zinc-950">
+          {props.title}
+        </div>
+
+        {props.badge && (
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+            {props.badge}
+          </span>
+        )}
+      </div>
+
+      {props.subtitle && (
+        <div className="mt-2 text-sm leading-5 text-zinc-500">{props.subtitle}</div>
+      )}
+    </div>
+  );
+}
+
+function SearchLoadingState(props: { query: string }) {
+  const isRecipe = looksLikeRecipeQuery(props.query);
+
+  return (
+    <div className="rounded-[28px] border border-emerald-100 bg-white p-5 shadow-sm">
+      <div className="flex items-start gap-4">
+        <div className="relative mt-1 h-12 w-12 shrink-0">
+          <div className="absolute inset-0 rounded-full border-4 border-emerald-100" />
+          <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-emerald-600" />
+          <div className="absolute inset-[10px] rounded-full bg-emerald-50" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="text-base font-semibold text-zinc-950">
+            {isRecipe ? "Preparando tu receta" : "Buscando los mejores productos"}
+          </div>
+
+          <div className="mt-1 text-sm leading-6 text-zinc-500">
+            {isRecipe
+              ? "Buscando ingredientes, revisando opciones y armando una selección más conveniente para ti."
+              : "Comparando resultados, disponibilidad y alternativas para mostrarte una mejor selección."}
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <div className="h-3 w-[78%] animate-pulse rounded-full bg-zinc-100" />
+            <div className="h-3 w-[62%] animate-pulse rounded-full bg-zinc-100" />
+            <div className="h-3 w-[70%] animate-pulse rounded-full bg-zinc-100" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -267,21 +350,31 @@ function AlternativePreview(props: {
     <button
       type="button"
       onClick={props.onClick}
-      className={`rounded-2xl border p-2 text-left ${
+      className={`w-[132px] shrink-0 snap-start rounded-[22px] border p-2.5 text-left transition ${
         props.active
-          ? "border-emerald-500 bg-emerald-50"
-          : "border-zinc-200 bg-white"
+          ? "border-emerald-600 bg-emerald-50 shadow-sm"
+          : "border-zinc-200 bg-white hover:border-zinc-300"
       }`}
     >
-      <div className="mb-2 flex justify-center">
+      <div className="relative">
         <ProductImage
           src={props.option.image_url}
           alt={props.option.product}
-          size="h-16 w-full"
+          size="h-24 w-full"
         />
+
+        <div
+          className={`absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full border text-[10px] font-bold ${
+            props.active
+              ? "border-emerald-700 bg-emerald-700 text-white"
+              : "border-zinc-300 bg-white text-transparent"
+          }`}
+        >
+          ✓
+        </div>
       </div>
 
-      <div className="line-clamp-2 text-[11px] font-semibold text-zinc-800">
+      <div className="mt-3 line-clamp-2 min-h-[34px] text-[12px] font-semibold leading-4 text-zinc-900">
         {getPreviewLabel(props.option.product)}
       </div>
 
@@ -289,7 +382,11 @@ function AlternativePreview(props: {
         {shortSupermarket(props.option.supermarket)}
       </div>
 
-      <div className="mt-1 text-[11px] font-semibold text-zinc-900">
+      <div className="mt-1 text-[11px] text-zinc-500">
+        {buildOptionCaption(props.option)}
+      </div>
+
+      <div className="mt-2 text-sm font-semibold text-zinc-950">
         {formatMoney(props.option.line_total)}
       </div>
     </button>
@@ -307,68 +404,83 @@ function NormalResultCard(props: {
   if (!best) return null;
 
   return (
-    <div className="rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm">
-      <div className="flex gap-3">
-        <ProductImage src={best.image_url} alt={best.product} />
+    <div className="overflow-hidden rounded-[28px] border border-zinc-200 bg-white shadow-sm">
+      <div className="p-4">
+        <div className="flex gap-3">
+          <ProductImage src={best.image_url} alt={best.product} size="h-24 w-24" />
 
-        <div className="min-w-0 flex-1">
-          <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-            {props.item.query}
-          </div>
-
-          <div className="mt-1 line-clamp-2 text-[17px] font-semibold leading-tight text-zinc-950">
-            {best.product}
-          </div>
-
-          <div className="mt-1 text-sm text-zinc-500">
-            {shortSupermarket(best.supermarket)}
-          </div>
-
-          <div className="mt-3 flex items-end justify-between gap-3">
-            <div>
-              <div className="text-[28px] font-semibold leading-none">
-                {formatMoney(best.line_total)}
-              </div>
-              <div className="mt-1 text-xs text-zinc-500">
-                Se comprará: {buildOptionCaption(best)}
-              </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-700">
+              {props.item.query}
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                className="rounded-2xl border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold"
-              >
-                {open ? "Ocultar" : "Ver más"}
-              </button>
+            <div className="mt-1 line-clamp-2 text-[18px] font-semibold leading-tight text-zinc-950">
+              {best.product}
+            </div>
+
+            <div className="mt-1 text-sm text-zinc-500">
+              {shortSupermarket(best.supermarket)}
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-zinc-100 px-3 py-1 text-[11px] font-medium text-zinc-600">
+                {buildOptionCaption(best)}
+              </span>
+
+              {!best.in_stock && (
+                <span className="rounded-full bg-red-50 px-3 py-1 text-[11px] font-medium text-red-600">
+                  Sin stock
+                </span>
+              )}
+            </div>
+
+            <div className="mt-4 flex items-end justify-between gap-3">
+              <div>
+                <div className="text-[30px] font-semibold leading-none text-zinc-950">
+                  {formatMoney(best.line_total)}
+                </div>
+                <div className="mt-1 text-xs text-zinc-500">
+                  Selección recomendada
+                </div>
+              </div>
 
               <button
                 type="button"
                 disabled={props.addingProductId === best.supermarket_product_id}
                 onClick={() => props.onAdd(best)}
-                className="rounded-2xl bg-black px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                className="rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
               >
                 {props.addingProductId === best.supermarket_product_id
                   ? "Agregando..."
-                  : "+ Agregar"}
+                  : "Agregar"}
               </button>
             </div>
           </div>
         </div>
+
+        {props.item.options.length > 1 && (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50"
+          >
+            {open ? "Ocultar opciones" : "Ver otras opciones"}
+            <span className={`transition ${open ? "rotate-180" : ""}`}>⌄</span>
+          </button>
+        )}
       </div>
 
-      {open && props.item.options.length > 0 && (
-        <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
+      {open && props.item.options.length > 1 && (
+        <div className="border-t border-zinc-100 bg-zinc-50/80 p-3">
           <div className="mb-3 text-sm font-semibold text-zinc-800">
-            Otras opciones
+            Más opciones para este producto
           </div>
 
           <div className="space-y-2">
             {props.item.options.slice(0, 6).map((opt) => (
               <div
                 key={`${opt.supermarket_id}-${opt.supermarket_product_id}`}
-                className="flex items-center gap-3 rounded-2xl bg-white px-3 py-3"
+                className="flex items-center gap-3 rounded-[22px] border border-zinc-200 bg-white px-3 py-3"
               >
                 <ProductImage
                   src={opt.image_url}
@@ -389,14 +501,14 @@ function NormalResultCard(props: {
                 </div>
 
                 <div className="text-right">
-                  <div className="text-sm font-semibold">
+                  <div className="text-sm font-semibold text-zinc-950">
                     {formatMoney(opt.line_total)}
                   </div>
                   <button
                     type="button"
                     disabled={props.addingProductId === opt.supermarket_product_id}
                     onClick={() => props.onAdd(opt)}
-                    className="mt-1 rounded-xl bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
+                    className="mt-2 rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
                   >
                     {props.addingProductId === opt.supermarket_product_id
                       ? "..."
@@ -431,106 +543,218 @@ function RecipeIngredientCard(props: {
   if (!selected) return null;
 
   return (
-    <div className="rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm">
-      <div className="flex gap-3">
-        <ProductImage src={selected.image_url} alt={selected.product} />
+    <div className="overflow-hidden rounded-[28px] border border-zinc-200 bg-white shadow-sm">
+      <div className="p-4">
+        <div className="flex gap-3">
+          <ProductImage
+            src={selected.image_url}
+            alt={selected.product}
+            size="h-24 w-24"
+          />
 
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="text-[19px] font-semibold text-zinc-950">
-              {props.item.ingredient_name}
-            </div>
-
-            {!props.item.required && (
-              <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[11px] font-semibold text-zinc-500">
-                Opcional
-              </span>
-            )}
-          </div>
-
-          <div className="mt-1 text-xs text-zinc-500">
-            Necesitas: {formatNeededQty(props.item.qty, props.item.ingredient_name)}
-          </div>
-
-          <div className="mt-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
-            <div className="text-xs font-semibold text-zinc-500">
-              Producto seleccionado
-            </div>
-
-            <div className="mt-1 line-clamp-2 text-base font-semibold text-zinc-950">
-              {selected.product}
-            </div>
-
-            <div className="mt-1 text-sm text-zinc-500">
-              {shortSupermarket(selected.supermarket)}
-            </div>
-
-            <div className="mt-2 text-2xl font-semibold text-zinc-950">
-              {formatMoney(selected.line_total)}
-            </div>
-
-            <div className="mt-1 text-xs text-zinc-500">
-              {formatPurchaseQty(selected)}
-            </div>
-          </div>
-
-          {options.length > 1 && (
-            <div className="mt-3">
-              <div className="mb-2 text-xs font-semibold text-zinc-500">
-                Cambiar opción
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="text-[19px] font-semibold leading-tight text-zinc-950">
+                {props.item.ingredient_name}
               </div>
 
-              <div className="space-y-3">
-                <div className="overflow-x-auto pb-1">
-                  <div className="flex gap-2">
-                    {options.slice(0, 5).map((opt) => {
-                      const active =
-                        opt.supermarket_product_id ===
-                        selected.supermarket_product_id;
+              {props.item.required ? (
+                <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                  Requerido
+                </span>
+              ) : (
+                <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-semibold text-zinc-500">
+                  Opcional
+                </span>
+              )}
+            </div>
 
-                      return (
-                        <div
-                          key={`${opt.supermarket_id}-${opt.supermarket_product_id}-preview`}
-                          className="w-[108px] shrink-0"
-                        >
-                          <AlternativePreview
-                            option={opt}
-                            active={active}
-                            onClick={() =>
-                              props.onSelect(
-                                props.item.ingredient_key,
-                                opt.supermarket_product_id
-                              )
-                            }
-                          />
-                        </div>
-                      );
-                    })}
+            <div className="mt-2 text-sm text-zinc-500">
+              Necesitas:{" "}
+              <span className="font-medium text-zinc-700">
+                {formatNeededQty(props.item.qty, props.item.ingredient_name)}
+              </span>
+            </div>
+
+            <div className="mt-3 rounded-[22px] border border-zinc-200 bg-zinc-50 p-3">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">
+                Selección actual
+              </div>
+
+              <div className="mt-1 line-clamp-2 text-base font-semibold text-zinc-950">
+                {selected.product}
+              </div>
+
+              <div className="mt-1 text-sm text-zinc-500">
+                {shortSupermarket(selected.supermarket)}
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <div className="text-[28px] font-semibold leading-none text-zinc-950">
+                    {formatMoney(selected.line_total)}
+                  </div>
+                  <div className="mt-1 text-xs text-zinc-500">
+                    {formatPurchaseQty(selected)}
                   </div>
                 </div>
 
-                <select
-                  value={selected.supermarket_product_id}
-                  onChange={(e) =>
-                    props.onSelect(
-                      props.item.ingredient_key,
-                      Number(e.target.value)
-                    )
-                  }
-                  className="w-full rounded-2xl border border-zinc-200 bg-white px-3 py-3 text-[16px] leading-normal outline-none"
-                >
-                  {options.map((opt) => (
-                    <option
-                      key={`${opt.supermarket_id}-${opt.supermarket_product_id}`}
-                      value={opt.supermarket_product_id}
-                    >
-                      {opt.product} — {opt.supermarket} — {formatMoney(opt.line_total)}
-                    </option>
-                  ))}
-                </select>
+                <div className="rounded-full bg-white px-3 py-1.5 text-[11px] font-medium text-zinc-600 shadow-sm">
+                  {buildOptionCaption(selected)}
+                </div>
               </div>
             </div>
-          )}
+          </div>
+        </div>
+
+        {options.length > 1 && (
+          <div className="mt-4">
+            <div className="mb-2 text-sm font-semibold text-zinc-800">
+              Otras opciones
+            </div>
+
+            <div className="overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex snap-x gap-3">
+                {options.slice(0, 8).map((opt) => {
+                  const active =
+                    opt.supermarket_product_id === selected.supermarket_product_id;
+
+                  return (
+                    <AlternativePreview
+                      key={`${opt.supermarket_id}-${opt.supermarket_product_id}-preview`}
+                      option={opt}
+                      active={active}
+                      onClick={() =>
+                        props.onSelect(
+                          props.item.ingredient_key,
+                          opt.supermarket_product_id
+                        )
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RecipeSummaryCard(props: {
+  recipeData: RecipeSearchResponse;
+  selectedRecipeCount: number;
+  recipeTotal: string;
+  addingRecipe: boolean;
+  onAdd: () => void;
+  ctaRef?: React.RefObject<HTMLButtonElement | null>;
+}) {
+  const missingCount =
+    props.recipeData.summary.ingredients_total -
+    props.recipeData.summary.ingredients_found;
+
+  return (
+    <div className="overflow-hidden rounded-[30px] border border-emerald-100 bg-white shadow-sm">
+      <div className="bg-gradient-to-br from-emerald-50 via-white to-white p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-[30px] font-semibold leading-none text-zinc-950">
+              {props.recipeData.recipe.name}
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+                {props.recipeData.recipe.servings} porciones
+              </span>
+
+              <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-[11px] font-semibold text-zinc-600">
+                {props.recipeData.summary.ingredients_found} de{" "}
+                {props.recipeData.summary.ingredients_total} encontrados
+              </span>
+
+              {missingCount > 0 && (
+                <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold text-amber-700">
+                  {missingCount} pendientes
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="text-left sm:text-right">
+            <div className="text-sm text-zinc-500">Total estimado</div>
+            <div className="mt-1 text-[32px] font-semibold leading-none text-emerald-700">
+              {props.recipeTotal}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="rounded-[22px] border border-zinc-200 bg-white p-3">
+            <div className="text-xs text-zinc-500">Ingredientes listos</div>
+            <div className="mt-1 text-xl font-semibold text-zinc-950">
+              {props.selectedRecipeCount}
+            </div>
+          </div>
+
+          <div className="rounded-[22px] border border-zinc-200 bg-white p-3">
+            <div className="text-xs text-zinc-500">Faltantes</div>
+            <div className="mt-1 text-xl font-semibold text-zinc-950">
+              {Math.max(0, missingCount)}
+            </div>
+          </div>
+        </div>
+
+        <button
+          ref={props.ctaRef}
+          type="button"
+          disabled={props.addingRecipe || props.selectedRecipeCount === 0}
+          onClick={props.onAdd}
+          className="mt-5 w-full rounded-full bg-emerald-700 px-5 py-4 text-base font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {props.addingRecipe
+            ? "Agregando..."
+            : "Agregar selección al carrito"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FloatingRecipeBar(props: {
+  visible: boolean;
+  recipeName: string;
+  total: string;
+  count: number;
+  disabled: boolean;
+  loading: boolean;
+  onClick: () => void;
+}) {
+  if (!props.visible) return null;
+
+  return (
+    <div className="fixed bottom-14 left-0 right-0 z-40 border-t border-zinc-200 bg-white/95 backdrop-blur">
+      <div className="mx-auto max-w-[430px] px-4 py-3">
+        <div className="rounded-[24px] border border-zinc-200 bg-zinc-50 px-4 py-3 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold text-zinc-950">
+                {props.recipeName}
+              </div>
+              <div className="mt-1 text-xs text-zinc-500">
+                {props.count} ingredientes seleccionados · {props.total}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              disabled={props.disabled || props.loading}
+              onClick={props.onClick}
+              className="shrink-0 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {props.loading ? "..." : "Agregar"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -540,7 +764,7 @@ function RecipeIngredientCard(props: {
 function SearchEmptyState(props: { title: string; message: string }) {
   return (
     <div className="flex min-h-[calc(100dvh-210px)] items-center justify-center px-6">
-      <div className="w-full max-w-[260px] text-center">
+      <div className="w-full max-w-[280px] text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center text-zinc-400">
           <svg
             viewBox="0 0 64 64"
@@ -573,7 +797,7 @@ function SearchEmptyState(props: { title: string; message: string }) {
           </svg>
         </div>
 
-        <div className="mt-4 text-[22px] font-semibold leading-tight text-zinc-800">
+        <div className="mt-4 text-[24px] font-semibold leading-tight text-zinc-800">
           {props.title}
         </div>
 
@@ -602,6 +826,9 @@ export default function Search() {
   );
   const [addingRecipe, setAddingRecipe] = useState(false);
   const [addingProductId, setAddingProductId] = useState<number | null>(null);
+  const [showFloatingRecipeBar, setShowFloatingRecipeBar] = useState(false);
+
+  const recipePrimaryCtaRef = useRef<HTMLButtonElement | null>(null);
 
   async function addSingleProduct(option: SearchOption) {
     setAddingProductId(option.supermarket_product_id);
@@ -708,6 +935,7 @@ export default function Search() {
     setRecipeData(null);
     setSuggestion(null);
     setRecipeSelections({});
+    setShowFloatingRecipeBar(false);
 
     try {
       const smart = await apiPost<SmartSearchResponse>("/ai/search-smart", {
@@ -773,6 +1001,7 @@ export default function Search() {
       setSuggestion(null);
       setRecipeSelections({});
       setError("");
+      setShowFloatingRecipeBar(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialQ]);
@@ -799,6 +1028,28 @@ export default function Search() {
     setRecipeSelections(nextSelections);
   }, [recipeData]);
 
+  useEffect(() => {
+    if (mode !== "recipe" || !recipePrimaryCtaRef.current) {
+      setShowFloatingRecipeBar(false);
+      return;
+    }
+
+    const node = recipePrimaryCtaRef.current;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowFloatingRecipeBar(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.2,
+      }
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [mode, recipeData, recipeSelections]);
+
   const normalTotal = useMemo(() => {
     if (!normalData) return "RD$ 0.00";
     return formatMoney(normalData.estimated_total_best);
@@ -822,62 +1073,71 @@ export default function Search() {
         loading={mode === "loading"}
       />
 
-      {mode !== "empty" && (
-        <div className="px-1">
-          <div className="text-[32px] font-semibold leading-none text-zinc-950">
-            Resultados AI
-          </div>
-          <div className="mt-2 text-sm text-zinc-500">
-            {q ? `Buscando: “${q}”` : "Busca productos o recetas"}
-          </div>
-
-          {suggestion &&
-            suggestion.corrected.trim().toLowerCase() !==
-              suggestion.original.trim().toLowerCase() && (
-              <div className="mt-2 text-sm text-zinc-500">
-                Mostrando resultados para{" "}
-                <span className="font-semibold text-zinc-800">
-                  “{suggestion.corrected}”
-                </span>
-              </div>
-            )}
-        </div>
+      {mode !== "empty" && mode !== "idle" && (
+        <SearchSectionHeader
+          title={
+            mode === "recipe"
+              ? "Mostrando receta"
+              : mode === "normal"
+                ? "Productos encontrados"
+                : "Buscando"
+          }
+          subtitle={q ? `Resultados para “${q}”` : "Busca productos o recetas"}
+          badge={mode === "recipe" ? "Receta" : mode === "normal" ? "Productos" : undefined}
+        />
       )}
 
+      {suggestion &&
+        suggestion.corrected.trim().toLowerCase() !==
+          suggestion.original.trim().toLowerCase() && (
+          <div className="rounded-[22px] border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-500 shadow-sm">
+            Mostrando resultados para{" "}
+            <span className="font-semibold text-zinc-800">
+              “{suggestion.corrected}”
+            </span>
+          </div>
+        )}
+
       {mode === "idle" && (
-        <div className="rounded-3xl border border-zinc-200 bg-white p-5 text-sm text-zinc-500 shadow-sm">
+        <div className="rounded-[28px] border border-zinc-200 bg-white p-5 text-sm text-zinc-500 shadow-sm">
           Escribe algo como “arroz”, “quiero arroz y leche” o “quiero hacer un sancocho”.
         </div>
       )}
 
-      {mode === "loading" && (
-        <div className="rounded-3xl border border-zinc-200 bg-white p-5 text-sm text-zinc-500 shadow-sm">
-          Buscando…
-        </div>
-      )}
+      {mode === "loading" && <SearchLoadingState query={q} />}
 
       {mode === "empty" && (
         <SearchEmptyState
-          title="Oops! No results found."
-          message="Please check spelling or try different keywords."
+          title="No encontré resultados"
+          message="Prueba con otro producto, una receta distinta o cambia algunas palabras de tu búsqueda."
         />
       )}
 
       {mode === "error" && (
-        <div className="rounded-3xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 shadow-sm">
+        <div className="rounded-[28px] border border-red-200 bg-red-50 p-5 text-sm text-red-700 shadow-sm">
           {error}
         </div>
       )}
 
       {mode === "normal" && normalData && (
         <>
-          <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <div className="text-[24px] font-semibold text-zinc-950">
-              Búsqueda normal
-            </div>
-            <div className="mt-2 text-base text-zinc-600">
-              Total estimado mejor opción:{" "}
-              <span className="font-semibold text-zinc-950">{normalTotal}</span>
+          <div className="rounded-[30px] border border-zinc-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <div className="text-[24px] font-semibold text-zinc-950">
+                  Resumen de búsqueda
+                </div>
+                <div className="mt-2 text-sm text-zinc-500">
+                  Selección recomendada según disponibilidad y precio.
+                </div>
+              </div>
+
+              <div className="text-left sm:text-right">
+                <div className="text-sm text-zinc-500">Total estimado</div>
+                <div className="mt-1 text-[30px] font-semibold leading-none text-emerald-700">
+                  {normalTotal}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -896,35 +1156,14 @@ export default function Search() {
 
       {mode === "recipe" && recipeData && (
         <>
-          <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <div className="text-[28px] font-semibold text-zinc-950">
-              {recipeData.recipe.name}
-            </div>
-
-            <div className="mt-2 text-base text-zinc-500">
-              {recipeData.summary.ingredients_found} de{" "}
-              {recipeData.summary.ingredients_total} ingredientes encontrados
-            </div>
-
-            <div className="mt-1 text-sm text-zinc-500">
-              Seleccionados: {selectedRecipeCount}
-            </div>
-
-            <div className="mt-3 text-[28px] font-semibold text-emerald-700">
-              Total estimado: {recipeTotal}
-            </div>
-
-            <button
-              type="button"
-              disabled={addingRecipe || selectedRecipeCount === 0}
-              onClick={handleAddSelectedRecipeToCart}
-              className="mt-4 rounded-2xl bg-black px-5 py-4 text-base font-semibold text-white disabled:opacity-60"
-            >
-              {addingRecipe
-                ? "Agregando..."
-                : "Agregar receta seleccionada al carrito"}
-            </button>
-          </div>
+          <RecipeSummaryCard
+            recipeData={recipeData}
+            selectedRecipeCount={selectedRecipeCount}
+            recipeTotal={recipeTotal}
+            addingRecipe={addingRecipe}
+            onAdd={handleAddSelectedRecipeToCart}
+            ctaRef={recipePrimaryCtaRef}
+          />
 
           <div className="space-y-3">
             {recipeData.items.map((item) => (
@@ -947,6 +1186,18 @@ export default function Search() {
           </div>
         </>
       )}
+
+      <FloatingRecipeBar
+        visible={mode === "recipe" && showFloatingRecipeBar}
+        recipeName={recipeData?.recipe.name ?? "Tu receta"}
+        total={recipeTotal}
+        count={selectedRecipeCount}
+        disabled={selectedRecipeCount === 0}
+        loading={addingRecipe}
+        onClick={handleAddSelectedRecipeToCart}
+      />
+
+      {mode === "recipe" && showFloatingRecipeBar && <div className="h-28" />}
     </div>
   );
 }

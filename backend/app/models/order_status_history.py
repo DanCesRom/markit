@@ -33,5 +33,5 @@ class OrderStatusHistory(Base):
 
     changed_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # relación ORM (opcional, pero recomendable)
+    # relacion ORM (opcional, pero recomendable)
     order = relationship("Order", back_populates="status_history")
