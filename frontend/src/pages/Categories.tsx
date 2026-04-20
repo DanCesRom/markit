@@ -59,24 +59,20 @@ export default function Categories() {
     const [markets, setMarkets] = useState<Supermarket[]>([]);
     const [marketId, setMarketId] = useState<number | null>(null);
 
-    const [q, setQ] = useState("");
     const [cats, setCats] = useState<CategoryRow[]>([]);
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
 
-    // mercado activo (objeto)
     const activeMarket = useMemo(() => {
         if (!marketId) return null;
         return markets.find((m) => m.id === marketId) ?? null;
     }, [markets, marketId]);
 
-    // clave normalizada para lookup (ej: "nacional", "la sirena")
     const activeMarketKey = useMemo(() => {
         const name = activeMarket?.name ?? "";
         return name.trim().toLowerCase();
     }, [activeMarket]);
 
-    // load supermarkets
     useEffect(() => {
         let alive = true;
 
@@ -87,12 +83,14 @@ export default function Categories() {
 
                 setMarkets(rows);
 
-                // default: Nacional si existe, sino el primero
                 const nacional = rows.find((x) => x.name.toLowerCase() === "nacional");
                 setMarketId(nacional?.id ?? rows[0]?.id ?? null);
-            } catch (e: any) {
+            } catch (e: unknown) {
                 if (!alive) return;
-                setErr(e?.message ?? "No pude cargar supermercados");
+
+                const message =
+                    e instanceof Error ? e.message : "No pude cargar supermercados";
+                setErr(message);
             }
         }
 
@@ -103,7 +101,6 @@ export default function Categories() {
         };
     }, []);
 
-    // load categories when market changes
     useEffect(() => {
         if (!marketId) return;
 
@@ -119,9 +116,12 @@ export default function Categories() {
                 );
                 if (!alive) return;
                 setCats(rows);
-            } catch (e: any) {
+            } catch (e: unknown) {
                 if (!alive) return;
-                setErr(e?.message ?? "No pude cargar categorías");
+
+                const message =
+                    e instanceof Error ? e.message : "No pude cargar categorías";
+                setErr(message);
             } finally {
                 if (alive) setLoading(false);
             }
@@ -134,13 +134,6 @@ export default function Categories() {
         };
     }, [marketId]);
 
-    const filtered = useMemo(() => {
-        const needle = q.trim().toLowerCase();
-        if (!needle) return cats;
-        return cats.filter((c) => c.name.toLowerCase().includes(needle));
-    }, [cats, q]);
-
-    // helper: resuelve el art por supermercado (override) y cae al default
     const getCategoryArt = (slug: string) => {
         const byMarket = CATEGORY_ART_BY_MARKET[activeMarketKey];
         return byMarket?.[slug] ?? CATEGORY_ART[slug];
@@ -148,12 +141,12 @@ export default function Categories() {
 
     return (
         <div className="space-y-4">
-            {/* Top title */}
             <div className="pt-1">
-                <h1 className="text-3xl font-semibold text-emerald-700">Categorías</h1>
+                <h1 className="text-3xl font-semibold text-emerald-700">
+                    Categorías
+                </h1>
             </div>
 
-            {/* Market selector */}
             <div className="flex gap-2 overflow-x-auto pb-1">
                 {markets.map((m) => {
                     const active = m.id === marketId;
@@ -173,7 +166,6 @@ export default function Categories() {
                 })}
             </div>
 
-            {/* Search */}
             <CategoriesSearchBar />
 
             {err && (
@@ -186,9 +178,8 @@ export default function Categories() {
                 <div className="text-sm text-zinc-500">Cargando categorías…</div>
             )}
 
-            {/* Grid */}
             <div className="grid grid-cols-2 gap-4">
-                {filtered.map((c) => {
+                {cats.map((c) => {
                     const art = getCategoryArt(c.slug);
 
                     return (
@@ -210,8 +201,7 @@ export default function Categories() {
                                             alt={c.name}
                                             className="h-16 w-16 object-contain"
                                             onError={(e) => {
-                                                (e.currentTarget as HTMLImageElement).style.display =
-                                                    "none";
+                                                e.currentTarget.style.display = "none";
                                             }}
                                         />
                                     ) : (
