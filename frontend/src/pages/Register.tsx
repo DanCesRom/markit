@@ -307,7 +307,7 @@ export default function Register() {
       </button>
 
       <h1 className="text-3xl font-semibold leading-tight">
-        Create your <br /> Account
+        Crea tu Cuenta
       </h1>
 
       <form onSubmit={submit} className="mt-6 space-y-3">
@@ -315,7 +315,7 @@ export default function Register() {
           icon={<FieldIconUser />}
           value={firstName}
           onChange={setFirstName}
-          placeholder="First name"
+          placeholder="Nombre"
           error={!!fieldErr.firstName}
         />
         {fieldErr.firstName ? (
@@ -326,7 +326,7 @@ export default function Register() {
           icon={<FieldIconUser />}
           value={lastName}
           onChange={setLastName}
-          placeholder="Last name"
+          placeholder="Apellido"
           error={!!fieldErr.lastName}
         />
         {fieldErr.lastName ? (
@@ -337,7 +337,7 @@ export default function Register() {
           icon={<FieldIconCalendar />}
           value={birthDate}
           onChange={setBirthDate}
-          placeholder="Birth date"
+          placeholder="Fecha de nacimiento"
           type="date"
           max={maxBirthDate()}
           error={!!fieldErr.birthDate}
@@ -381,7 +381,7 @@ export default function Register() {
           icon={<FieldIconPhone />}
           value={phone}
           onChange={setPhone}
-          placeholder="Phone"
+          placeholder="Telefono"
           inputMode="tel"
           error={!!fieldErr.phone}
         />
@@ -393,7 +393,7 @@ export default function Register() {
           icon={<FieldIconMail />}
           value={email}
           onChange={setEmail}
-          placeholder="Email"
+          placeholder="Correo"
           type="email"
           inputMode="email"
           error={!!fieldErr.email}
@@ -405,7 +405,7 @@ export default function Register() {
         <PasswordInput
           value={password}
           onChange={setPassword}
-          placeholder="Password"
+          placeholder="Contraseña"
           error={!!fieldErr.password}
         />
         {fieldErr.password ? (
@@ -415,7 +415,7 @@ export default function Register() {
         <PasswordInput
           value={confirmPassword}
           onChange={setConfirmPassword}
-          placeholder="Repeat password"
+          placeholder="Repite Contraseña"
           error={!!fieldErr.confirmPassword}
         />
         {fieldErr.confirmPassword ? (
@@ -458,10 +458,10 @@ export default function Register() {
           disabled={loading}
           className="mt-2 w-full rounded-2xl bg-[#0D1B3D] py-3 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {loading ? "Creando…" : "Sign up"}
+          {loading ? "Creando…" : "Registrarse"}
         </button>
 
-        <div className="pt-4 text-center text-xs text-zinc-500">or continue with</div>
+        <div className="pt-4 text-center text-xs text-zinc-500">o continuar con</div>
 
         <div className="mt-4 flex justify-center gap-4">
           <SocialBtn icon={facebookLogo} />
@@ -471,15 +471,15 @@ export default function Register() {
         </div>
 
         <div className="pt-4 text-center text-sm text-zinc-600">
-          Already have an account?{" "}
+          ¿Ya tienes una cuenta?{" "}
           <Link to="/login" className="font-semibold text-emerald-700">
-            Sign in
+            Inicia sesión
           </Link>
         </div>
 
         <div className="flex items-center justify-between pt-6 text-[11px] text-zinc-400">
-          <span>Privacy Policy</span>
-          <span>Term of Service</span>
+          <span>Política de privacidad</span>
+          <span>Términos de servicio</span>
         </div>
       </form>
     </AuthLayout>

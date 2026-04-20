@@ -141,7 +141,7 @@ export default function AddCard() {
 
       navigate("/wallet");
     } catch {
-      setFlash("Could not save card");
+      setFlash("No se pudo guardar la tarjeta");
     } finally {
       setSaving(false);
     }
@@ -157,21 +157,21 @@ export default function AddCard() {
         </div>
       ) : null}
 
-      <ScreenHeader title="Add Card" onBack={() => navigate(-1)} />
+      <ScreenHeader title="Agregar Tarjeta" onBack={() => navigate(-1)} />
 
       <section className="rounded-[30px] bg-white p-5 shadow-sm ring-1 ring-zinc-100">
         <div className="mb-4">
           <div className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">
-            Card details
+            Detalles de la tarjeta
           </div>
           <div className="text-sm text-zinc-500">
-            Add your payment card metadata for Markit wallet.
+            Agrega los datos de tu tarjeta de pago para la billetera de Markit.
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <FieldLabel>Card number</FieldLabel>
+            <FieldLabel>Número de tarjeta</FieldLabel>
             <div className="relative">
               <TextInput
                 inputMode="numeric"
@@ -189,7 +189,7 @@ export default function AddCard() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <FieldLabel>Exp. Date</FieldLabel>
+              <FieldLabel>Fecha de expiración</FieldLabel>
               <TextInput
                 inputMode="numeric"
                 autoComplete="cc-exp"
@@ -212,7 +212,7 @@ export default function AddCard() {
           </div>
 
           <div>
-            <FieldLabel>Nickname (optional)</FieldLabel>
+            <FieldLabel>Apodo (opcional)</FieldLabel>
             <TextInput
               placeholder="e.g. Personal or Work card"
               value={nickname}
@@ -228,7 +228,7 @@ export default function AddCard() {
               className="h-4 w-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
             />
             <span className="text-sm font-medium text-zinc-900">
-              Make this my default card
+              Tarjeta Predeterminada
             </span>
           </label>
         </div>
@@ -238,7 +238,7 @@ export default function AddCard() {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="text-xs uppercase tracking-[0.18em] text-zinc-400">
-              Preview
+              Vista previa
             </div>
 
             <div className="mt-4 overflow-hidden">
@@ -291,7 +291,7 @@ export default function AddCard() {
             : "cursor-not-allowed bg-zinc-200 text-zinc-500"
         }`}
       >
-        {saving ? "Saving..." : "Save card"}
+        {saving ? "Guardando..." : "Guardar tarjeta"}
       </button>
     </div>
   );
@@ -333,7 +333,7 @@ function CardBrandBadge({
         dark ? "bg-zinc-700 text-zinc-200" : "bg-zinc-100 text-zinc-500"
       }`}
     >
-      Card
+      Tarjeta
     </div>
   );
 }

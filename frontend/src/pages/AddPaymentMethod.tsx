@@ -64,21 +64,21 @@ export default function AddPaymentMethod() {
   return (
     <div className="mx-auto w-full max-w-2xl space-y-5 pb-8">
       <ScreenHeader
-        title="Add Payment Method"
+        title="Agregar método de pago"
         onBack={() => navigate(-1)}
       />
 
       <div className="space-y-3">
         <AddMethodRow
-          title="Credit or debit card"
-          subtitle="Visa, Mastercard and more"
+          title="Tarjeta de crédito o débito"
+          subtitle="Visa, Mastercard y más"
           icon={<CardIcon />}
           onClick={() => navigate("/wallet/add-card")}
         />
 
         <AddMethodRow
           title="Apple Pay"
-          subtitle="Coming soon"
+          subtitle="Próximamente"
           icon={<ApplePayIcon />}
           onClick={() => {}}
         />

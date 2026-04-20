@@ -22,7 +22,7 @@ function SocialBtn({ icon, onClick }: SocialBtnProps) {
     return (
         <button
             type="button"
-            onClick={onClick ?? (() => alert("MVP: social login luego"))}
+            onClick={onClick ?? (() => alert("MVP: inicio de sesión social luego"))}
             className="
         w-14 h-14
         flex items-center justify-center
@@ -93,7 +93,98 @@ function EyeOffIcon() {
     );
 }
 
-type LoginResponse = { access_token: string; token_type: string };
+type LoginResponse = {
+    access_token: string;
+    token_type: string;
+};
+
+type ApiValidationItem = {
+    loc?: Array<string | number>;
+    msg?: string;
+    type?: string;
+};
+
+function formatApiError(data: any): string {
+    if (!data) return "No se pudo iniciar sesión.";
+
+    if (typeof data === "string") {
+        return data;
+    }
+
+    if (typeof data === "object") {
+        const detail = data.detail;
+
+        if (typeof detail === "string") {
+            return detail;
+        }
+
+        if (Array.isArray(detail)) {
+            const items = detail as ApiValidationItem[];
+
+            const hasUsernameMissing = items.some(
+                (item) =>
+                    Array.isArray(item.loc) &&
+                    item.loc.includes("username") &&
+                    (item.msg?.toLowerCase().includes("field required") ||
+                        item.type?.toLowerCase().includes("missing"))
+            );
+
+            const hasPasswordMissing = items.some(
+                (item) =>
+                    Array.isArray(item.loc) &&
+                    item.loc.includes("password") &&
+                    (item.msg?.toLowerCase().includes("field required") ||
+                        item.type?.toLowerCase().includes("missing"))
+            );
+
+            if (hasUsernameMissing && hasPasswordMissing) {
+                return "Debes escribir tu correo y tu contraseña.";
+            }
+
+            if (hasUsernameMissing) {
+                return "Debes escribir tu correo.";
+            }
+
+            if (hasPasswordMissing) {
+                return "Debes escribir tu contraseña.";
+            }
+
+            const readable = items
+                .map((item) => {
+                    if (!item) return null;
+
+                    const loc = Array.isArray(item.loc)
+                        ? item.loc[item.loc.length - 1]
+                        : null;
+
+                    const field =
+                        loc === "username"
+                            ? "correo"
+                            : loc === "password"
+                                ? "contraseña"
+                                : typeof loc === "string"
+                                    ? loc
+                                    : null;
+
+                    if (field && item.msg) {
+                        return `${field}: ${item.msg}`;
+                    }
+
+                    return item.msg || null;
+                })
+                .filter(Boolean)
+                .join(". ");
+
+            if (readable) return readable;
+        }
+
+        if (typeof data.message === "string") {
+            return data.message;
+        }
+    }
+
+    return "No se pudo iniciar sesión.";
+}
 
 export default function Login() {
     const navigate = useNavigate();
@@ -112,12 +203,32 @@ export default function Login() {
     async function submit(e: React.FormEvent) {
         e.preventDefault();
         setErr(null);
+
+        const cleanEmail = email.trim().toLowerCase();
+        const cleanPassword = password;
+
+        // Validación rápida en frontend
+        if (!cleanEmail && !cleanPassword) {
+            setErr("Debes escribir tu correo y tu contraseña.");
+            return;
+        }
+
+        if (!cleanEmail) {
+            setErr("Debes escribir tu correo.");
+            return;
+        }
+
+        if (!cleanPassword) {
+            setErr("Debes escribir tu contraseña.");
+            return;
+        }
+
         setLoading(true);
 
         try {
             const form = new URLSearchParams();
-            form.append("username", email.trim().toLowerCase());
-            form.append("password", password);
+            form.append("username", cleanEmail);
+            form.append("password", cleanPassword);
 
             const res = await fetch(`${API_BASE}/auth/login`, {
                 method: "POST",
@@ -135,10 +246,7 @@ export default function Login() {
             }
 
             if (!res.ok) {
-                const msg =
-                    (data && typeof data === "object" && data.detail) ||
-                    (typeof data === "string" ? data : `HTTP ${res.status}`);
-                throw new Error(String(msg));
+                throw new Error(formatApiError(data) || `HTTP ${res.status}`);
             }
 
             const json = data as LoginResponse;
@@ -165,7 +273,7 @@ export default function Login() {
                 </button>
 
                 <h1 className="text-3xl font-semibold leading-tight">
-                    Login to your <br /> Account
+                    Inicia sesión en tu <br /> cuenta
                 </h1>
 
                 <form onSubmit={submit} className="mt-6 space-y-3">
@@ -176,7 +284,7 @@ export default function Login() {
                             setEmail(v);
                             if (err) setErr(null);
                         }}
-                        placeholder="Email"
+                        placeholder="Correo"
                         error={!!err}
                     />
 
@@ -187,7 +295,7 @@ export default function Login() {
                             setPassword(v);
                             if (err) setErr(null);
                         }}
-                        placeholder="Password"
+                        placeholder="Contraseña"
                         type={showPassword ? "text" : "password"}
                         error={!!err}
                         rightIcon={
@@ -195,7 +303,7 @@ export default function Login() {
                                 type="button"
                                 onClick={() => setShowPassword((v) => !v)}
                                 className="text-zinc-400 hover:text-zinc-700 transition"
-                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                             >
                                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                             </button>
@@ -210,7 +318,7 @@ export default function Login() {
                                 onChange={(e) => setRemember(e.target.checked)}
                                 className="h-4 w-4 accent-emerald-600"
                             />
-                            Remember me
+                            Recuérdame
                         </label>
 
                         <button
@@ -220,7 +328,7 @@ export default function Login() {
                             }
                             className="text-emerald-700"
                         >
-                            Forgot the password?
+                            ¿Olvidaste tu contraseña?
                         </button>
                     </div>
 
@@ -234,7 +342,7 @@ export default function Login() {
                     </button>
 
                     <div className="pt-4 text-center text-xs text-zinc-500">
-                        or continue with
+                        o continúa con
                     </div>
 
                     <div className="mt-4 flex justify-center gap-4">
@@ -245,15 +353,15 @@ export default function Login() {
                     </div>
 
                     <div className="pt-4 text-center text-sm text-zinc-600">
-                        Don’t have an account?{" "}
+                        ¿No tienes una cuenta?{" "}
                         <Link to="/register" className="font-semibold text-emerald-700">
-                            Sign up
+                            Regístrate
                         </Link>
                     </div>
 
                     <div className="pt-6 flex items-center justify-between text-[11px] text-zinc-400">
-                        <span>Privacy Policy</span>
-                        <span>Term of Service</span>
+                        <span>Política de privacidad</span>
+                        <span>Términos de servicio</span>
                     </div>
                 </form>
             </AuthLayout>

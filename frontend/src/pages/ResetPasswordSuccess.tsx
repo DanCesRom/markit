@@ -55,18 +55,18 @@ export default function ResetPasswordSuccess() {
         </div>
 
         <h1 className="mt-6 text-4xl font-extrabold text-zinc-900">
-          Password Changed
+          Contraseña Actualizada
         </h1>
 
         <p className="mt-4 text-sm text-zinc-600 max-w-[280px]">
-          Your password has been updated successfully. Please login again.
+          Tu contraseña se ha actualizado correctamente. Por favor, inicia sesión nuevamente.
         </p>
 
         <button
           onClick={() => navigate("/login", { replace: true })}
           className="mt-10 w-full max-w-md rounded-full bg-[#0D1B3D] py-4 text-sm font-semibold text-white"
         >
-          Back to Login
+          Volver al inicio de sesión
         </button>
       </div>
     </div>

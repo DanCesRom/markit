@@ -68,11 +68,11 @@ export default function CheckoutSuccess() {
         </div>
 
         <h1 className="mt-6 text-4xl font-extrabold text-zinc-900">
-          Order Confirmed
+          Orden Confirmada
         </h1>
 
         <p className="mt-4 max-w-[280px] text-sm text-zinc-600">
-          Your order has been placed successfully. You will be redirected shortly.
+          Su orden ha sido realizada con éxito. Será redirigido en breve.
         </p>
 
         {data?.checkout_session_id && (
@@ -84,7 +84,7 @@ export default function CheckoutSuccess() {
         {redirecting && (
           <div className="mt-10 flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-4 border-[#0D1B3D]/20 border-t-[#0D1B3D] animate-spin" />
-            <span className="text-xs text-zinc-500">Redirecting…</span>
+            <span className="text-xs text-zinc-500">Redirigiendo…</span>
           </div>
         )}
       </div>

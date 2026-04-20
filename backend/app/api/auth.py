@@ -241,17 +241,16 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     user = db.query(User).filter(User.email == email).first()
     if not user:
-        raise HTTPException(status_code=401, detail="Please check your email or password and try again")
+        raise HTTPException(status_code=401, detail="Revisa tu correo o contraseña e inténtalo de nuevo")
 
     if hasattr(user, "status") and user.status != UserStatus.active:
-        raise HTTPException(status_code=403, detail="User is not active (verify email first)")
+        raise HTTPException(status_code=403, detail="El usuario no está activo (verifica tu correo primero)")
 
     cred = db.query(UserCredential).filter(UserCredential.user_id == user.id).first()
     if not cred:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
+        raise HTTPException(status_code=401, detail="Credenciales inválidas")
     if not verify_password(password, cred.password_hash):
-        raise HTTPException(status_code=401, detail="Please check your email or password and try again")
+        raise HTTPException(status_code=401, detail="Revisa tu correo o contraseña e inténtalo de nuevo")
 
     token = create_access_token(subject=str(user.id))
     return {"access_token": token, "token_type": "bearer"}

@@ -14,10 +14,10 @@ function fmtMinutesByStatus(status: string) {
 
 function normalizeStatus(s: string) {
   const v = (s || "").toLowerCase();
-  if (v === "created" || v === "paid") return "Order Placed";
-  if (v === "preparing") return "On its way";
-  if (v === "completed") return "Order Received";
-  if (v === "cancelled") return "Cancelled";
+  if (v === "created" || v === "paid") return "Pedido Realizado";
+  if (v === "preparing") return "En Camino";
+  if (v === "completed") return "Pedido Recibido";
+  if (v === "cancelled") return "Cancelado";
   return s;
 }
 
@@ -27,10 +27,10 @@ function pickTimeline(history: OrderStatusHistoryItem[], fallbackStatus: string)
   const last = sorted[sorted.length - 1]?.status || fallbackStatus;
 
   const steps = [
-    { key: "created", label: "Order Placed" },
-    { key: "paid", label: "Order Confirmed" }, // en tu backend paid se usa como confirm
-    { key: "preparing", label: "On its way" },
-    { key: "completed", label: "Home" },
+    { key: "created", label: "Pedido Realizado" },
+    { key: "paid", label: "Pedido Confirmado" }, // en tu backend paid se usa como confirm
+    { key: "preparing", label: "En Camino" },
+    { key: "completed", label: "Pedido Recibido" },
   ];
 
   // si no existe paid en history, igual la mostramos como "pendiente"
@@ -125,7 +125,7 @@ export default function TrackOrder() {
           >
             ←
           </button>
-          <div className="text-lg font-semibold">Track Order</div>
+          <div className="text-lg font-semibold">Rastrear Pedido</div>
         </div>
         <button className="grid h-9 w-9 place-items-center rounded-xl hover:bg-zinc-100">
           ⋮
@@ -139,7 +139,7 @@ export default function TrackOrder() {
             <div className="h-9 w-9 overflow-hidden rounded-full bg-zinc-200" />
             <div>
               <div className="text-sm font-semibold">Sofia</div>
-              <div className="text-xs text-zinc-500">Delivery information</div>
+              <div className="text-xs text-zinc-500">Información de entrega</div>
             </div>
           </div>
 
@@ -155,11 +155,11 @@ export default function TrackOrder() {
 
         <div className="grid grid-cols-2 gap-2 px-4 py-3 text-center text-xs">
           <div className="rounded-xl bg-zinc-50 p-2">
-            <div className="text-[10px] text-zinc-500">ESTIMATED TIME</div>
-            <div className="mt-0.5 font-semibold">{eta} minutes</div>
+            <div className="text-[10px] text-zinc-500">TIEMPO ESTIMADO</div>
+            <div className="mt-0.5 font-semibold">{eta} minutos</div>
           </div>
           <div className="rounded-xl bg-zinc-50 p-2">
-            <div className="text-[10px] text-zinc-500">ORDER NUMBER</div>
+            <div className="text-[10px] text-zinc-500">NÚMERO DE PEDIDO</div>
             <div className="mt-0.5 font-semibold">#{order.id}</div>
           </div>
         </div>
@@ -235,7 +235,7 @@ export default function TrackOrder() {
             : "bg-slate-900 text-white"
         } disabled:opacity-50`}
       >
-        {currentStatus === "completed" ? "Order Received" : finishing ? "Updating…" : "Order Received"}
+        {currentStatus === "completed" ? "Pedido Recibido" : finishing ? "Actualizando…" : "Pedido Recibido"}
       </button>
     </div>
   );

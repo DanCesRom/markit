@@ -188,7 +188,7 @@ export default function Cart() {
                 <NoScroll />
 
                 <div className="mx-auto w-full max-w-[430px]">
-                    <div className="relative min-h-[calc(100dvh-64px)] overflow-hidden bg-[#f7f7f7]">
+                    <div className="relative min-h-[calc(100dvh-64px)] overflow-hidden bg-[#ffffff]">
                         <EmptyCartBackground />
 
                         <div className="relative flex min-h-[calc(100dvh-64px)] flex-col px-5">
@@ -245,7 +245,7 @@ export default function Cart() {
                 >
                     ←
                 </button>
-                <div className="text-xl font-semibold text-emerald-700">My cart</div>
+                <div className="text-xl font-semibold text-emerald-700">Mi carrito</div>
             </div>
 
             {err && (
@@ -374,7 +374,7 @@ export default function Cart() {
                 onClick={() => navigate("/")}
                 className="mt-6 w-full rounded-2xl border border-emerald-600 bg-white py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
             >
-                Continue Shopping
+                Seguir comprando
             </button>
 
             <div className="fixed bottom-14 left-0 right-0 z-40">
@@ -396,18 +396,18 @@ export default function Cart() {
                             >
                                 {allChecked ? "✓" : ""}
                             </span>
-                            All
+                            Todo
                         </button>
 
                         <div className="flex-1 text-xs text-zinc-600">
                             <div>
-                                Total price:{" "}
+                                Precio total:{" "}
                                 <span className="font-semibold text-zinc-900">
                                     {money(selectedTotal)}
                                 </span>
                             </div>
                             <div className="text-[11px] text-emerald-700">
-                                Save: {money(selectedSavings)}
+                                Ahorro: {money(selectedSavings)}
                             </div>
                         </div>
 

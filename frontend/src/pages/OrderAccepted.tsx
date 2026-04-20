@@ -30,16 +30,16 @@ export default function OrderAccepted() {
         </div>
 
         <h1 className="mt-6 text-4xl font-extrabold text-zinc-900">
-          Your order has been Accepted
+          Tu pedido ha sido aceptado
         </h1>
 
         <p className="mt-4 max-w-[300px] text-sm text-zinc-600">
-          Your items have been placed and are on the way to being processed.
+          Tus artículos han sido colocados y están en camino de ser procesados.
         </p>
 
         {orderId && (
           <div className="mt-4 text-xs text-zinc-500">
-            Order #{orderId}
+            Pedido #{orderId}
           </div>
         )}
 
@@ -48,14 +48,14 @@ export default function OrderAccepted() {
             onClick={() => navigate(`/orders/${orderId}/track`)}
             className="w-full rounded-full bg-[#0D1B3D] py-4 text-sm font-semibold text-white"
           >
-            Track Order
+            Rastrear Pedido
           </button>
 
           <button
             onClick={() => navigate("/", { replace: true })}
             className="w-full rounded-full border border-[#119B6B] bg-transparent py-4 text-sm font-semibold text-[#119B6B]"
           >
-            Continue Shopping
+            Continuar Comprando
           </button>
         </div>
       </div>

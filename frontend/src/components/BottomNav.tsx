@@ -73,28 +73,28 @@ export default function BottomNav() {
         <div className="flex h-16 rounded-2xl border border-zinc-200 bg-white/95 px-2 shadow-lg backdrop-blur">
           <Item
             to="/"
-            label="Shop"
+            label="Tienda"
             emojiFallback="🏪"
             icon={NAV_ICONS.shop}
             iconActive={NAV_ICONS.shopActive}
           />
           <Item
             to="/categories"
-            label="Categories"
+            label="Categorías"
             emojiFallback="🧺"
             icon={NAV_ICONS.categories}
             iconActive={NAV_ICONS.categoriesActive}
           />
           <Item
             to="/cart"
-            label="Cart"
+            label="Carrito"
             emojiFallback="🛒"
             icon={NAV_ICONS.cart}
             iconActive={NAV_ICONS.cartActive}
           />
           <Item
             to="/profile"
-            label="Account"
+            label=" Mi Cuenta"
             emojiFallback="👤"
             icon={NAV_ICONS.account}
             iconActive={NAV_ICONS.accountActive}

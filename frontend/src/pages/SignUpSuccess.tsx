@@ -63,18 +63,18 @@ export default function SignUpSuccess() {
 
         {/* ✅ solo texto cambiado */}
         <h1 className="mt-6 text-4xl font-extrabold text-zinc-900">
-          Congratulations
+          ¡Felicidades!
         </h1>
 
         <p className="mt-4 text-sm text-zinc-600 max-w-[280px]">
-          Your account is ready to use. You will be redirected to the home page.
+          Tu cuenta está lista para usar. Serás redirigido a la página de inicio.
         </p>
 
         {/* ✅ loader + autoredirect */}
         {redirecting && (
           <div className="mt-10 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-4 border-[#0D1B3D]/20 border-t-[#0D1B3D] rounded-full animate-spin" />
-            <span className="text-xs text-zinc-500">Redirecting…</span>
+            <span className="text-xs text-zinc-500">Redirigiendo…</span>
           </div>
         )}
 

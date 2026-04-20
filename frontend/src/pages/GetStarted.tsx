@@ -52,21 +52,21 @@ export default function GetStarted() {
                     />
 
                     <h1 className="mt-2 text-3xl font-extrabold text-zinc-900">
-                        Let’s Get Started!
+                        ¡Empecemos!
                     </h1>
 
                     {/* Social buttons */}
                     <div className="mt-10 w-full max-w-md space-y-3">
-                        <SocialBtn label="Continue with Facebook" icon={facebookLogo} />
-                        <SocialBtn label="Continue with Google" icon={googleLogo} />
-                        <SocialBtn label="Continue with Apple" icon={appleLogo} />
-                        <SocialBtn label="Continue with X" icon={xLogo} />
+                        <SocialBtn label="Continuar con Facebook" icon={facebookLogo} />
+                        <SocialBtn label="Continuar con Google" icon={googleLogo} />
+                        <SocialBtn label="Continuar con Apple" icon={appleLogo} />
+                        <SocialBtn label="Continuar con  X" icon={xLogo} />
                     </div>
 
                     {/* Divider */}
                     <div className="my-7 flex w-full max-w-md items-center gap-3 text-xs text-zinc-400">
                         <div className="h-px flex-1 bg-zinc-200" />
-                        <span>or</span>
+                        <span>o</span>
                         <div className="h-px flex-1 bg-zinc-200" />
                     </div>
 
@@ -75,19 +75,19 @@ export default function GetStarted() {
                         onClick={() => navigate("/login")}
                         className="w-full max-w-md rounded-full bg-[#0D1B3D] py-4 text-sm font-semibold text-white"
                     >
-                        Sign in with password
+                        Inicia sesión con contraseña
                     </button>
 
                     <div className="mt-6 text-sm text-zinc-600">
-                        Don&apos;t have an account?{" "}
+                        ¿No tienes una cuenta?{" "}
                         <Link to="/register" className="font-semibold text-[#66B23A]">
-                            Sign up
+                            Regístrate
                         </Link>
                     </div>
 
                     <div className="mt-12 w-full max-w-md flex justify-between text-[11px] text-zinc-400">
-                        <span>Privacy Policy</span>
-                        <span>Term of Service</span>
+                        <span>Política de privacidad</span>
+                        <span>Términos de servicio</span>
                     </div>
                 </div>
             </div>

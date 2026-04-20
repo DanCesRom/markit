@@ -120,7 +120,7 @@ export default function ForgotVerify() {
 
       setCooldown(COOLDOWN_SEC);
     } catch (e2: any) {
-      setErr(e2?.message ?? "Could not send code");
+      setErr(e2?.message ?? "No se pudo enviar el código");
     } finally {
       setLoadingResend(false);
     }
@@ -131,7 +131,7 @@ export default function ForgotVerify() {
     setErr(null);
 
     if (code.length !== 6) {
-      setErr("Enter the 6 digits code");
+      setErr("Ingresa el código de 6 dígitos");
       return;
     }
 
@@ -144,7 +144,7 @@ export default function ForgotVerify() {
         state: { resetToken: res.reset_token, email },
       });
     } catch (e2: any) {
-      setErr(e2?.message ?? "This code is not correct");
+      setErr(e2?.message ?? "Este código no es correcto");
       setDigits(Array(6).fill(""));
       setTimeout(() => focusIndex(0), 0);
     } finally {
@@ -164,17 +164,17 @@ export default function ForgotVerify() {
           ←
         </button>
 
-        <h1 className="text-xl font-semibold text-zinc-900">Enter 6 Digits Code</h1>
+        <h1 className="text-xl font-semibold text-zinc-900">Ingresa el código de 6 dígitos</h1>
       </div>
 
       <p className="text-sm text-zinc-600 text-center">
-        Enter the 6 digits code that you received <br />
-        on your {channel === "sms" ? "SMS" : "Email"}
+        Ingresa el código de 6 dígitos que recibiste <br />
+        en tu {channel === "sms" ? "SMS" : "Correo electrónico"}
       </p>
 
       {/* ✅ sent to */}
       <div className="mt-3 text-center text-sm text-zinc-700">
-        Code sent to <span className="font-semibold">{targetMasked}</span>
+        Código enviado a <span className="font-semibold">{targetMasked}</span>
       </div>
 
       {hasError && <div className="mt-4 text-center text-sm text-red-500">{err}</div>}
@@ -237,7 +237,7 @@ export default function ForgotVerify() {
             />
           </svg>
 
-          {cooldown > 0 ? `Resend in ${cooldown}s` : loadingResend ? "Sending…" : "Get new code"}
+          {cooldown > 0 ? `Reenviar en ${cooldown}s` : loadingResend ? "Enviando…" : "Obtener nuevo código"}
         </button>
 
         {/* Verify button */}
@@ -245,12 +245,12 @@ export default function ForgotVerify() {
           disabled={loadingVerify}
           className="mt-8 w-full rounded-full bg-[#0D1B3D] py-4 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {loadingVerify ? "Verifying…" : "Verify"}
+          {loadingVerify ? "Verificando…" : "Verificar"}
         </button>
 
         {hint && (
           <div className="pt-4 text-center text-xs text-zinc-500">
-            (MVP) code: <b>{hint}</b>
+            (MVP) código: <b>{hint}</b>
           </div>
         )}
       </form>

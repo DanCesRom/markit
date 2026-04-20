@@ -95,17 +95,17 @@ function MarkitBalanceCard({ balance }: { balance: number }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
-            Markit Wallet
+            Billetera Markit
           </div>
           <div className="mt-3 text-sm text-emerald-50/90">
-            Available balance
+            Saldo disponible
           </div>
           <div className="mt-1 text-[38px] font-bold leading-none">
             DOP {balance.toFixed(2)}
           </div>
           <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-sm text-emerald-50 backdrop-blur-sm">
             <InfoCircleIcon />
-            Auto-refill is off
+            Recarga automática desactivada
           </div>
         </div>
 
@@ -119,7 +119,7 @@ function MarkitBalanceCard({ balance }: { balance: number }) {
           type="button"
           className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
         >
-          + Add funds
+          + Agregar fondos
         </button>
       </div>
     </section>
@@ -208,7 +208,7 @@ function PaymentMethodRow({
           </div>
           {item.isDefault ? (
             <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-200">
-              Default
+              Predeterminado
             </span>
           ) : null}
         </div>
@@ -241,7 +241,7 @@ export default function Wallet() {
       try {
         await loadPaymentMethods();
       } catch {
-        setFlash("Could not load payment methods");
+        setFlash("No se pudieron cargar los métodos de pago");
       } finally {
         setLoading(false);
       }
@@ -282,8 +282,8 @@ export default function Wallet() {
       {
         id: "cash",
         type: "cash",
-        label: "Cash",
-        subtitle: "Pay on delivery",
+        label: "Efectivo",
+        subtitle: "Pagar al recibir",
       },
     ];
   }, [cards]);
@@ -319,9 +319,9 @@ export default function Wallet() {
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <SectionTitle>Payment methods</SectionTitle>
+          <SectionTitle>Métodos de pago</SectionTitle>
           <div className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-600">
-            {cardsCount} cards
+            {cardsCount} tarjetas
           </div>
         </div>
 

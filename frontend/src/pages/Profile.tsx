@@ -155,19 +155,19 @@ export default function Profile() {
   const quickActions: QuickAction[] = [
     {
       key: "favorites",
-      title: "Favorites",
+      title: "Favoritos",
       icon: <HeartIcon />,
       onClick: () => navigate("/favorites"),
     },
     {
       key: "wallet",
-      title: "Wallet",
+      title: "Billetera",
       icon: <WalletIcon />,
       onClick: () => navigate("/wallet"),
     },
     {
       key: "orders",
-      title: "Orders",
+      title: "Pedidos",
       icon: <BagIcon />,
       onClick: () => navigate("/orders"),
     },
@@ -176,57 +176,57 @@ export default function Profile() {
   const menuItems: MenuItem[] = [
     {
       key: "promotions",
-      title: "Promotions",
-      subtitle: "Offers and discount benefits",
+      title: "Promociones",
+      subtitle: "Ofertas y beneficios de descuento",
       placeholder: true,
       icon: <TagIcon />,
     },
     {
       key: "help",
-      title: "Help",
-      subtitle: "Support and assistance",
+      title: "Ayuda",
+      subtitle: "Soporte y asistencia",
       placeholder: true,
       icon: <HelpIcon />,
     },
     {
       key: "invite",
-      title: "Invite friends",
-      subtitle: "Share Markit with your friends",
+      title: "Invitar amigos",
+      subtitle: "Comparte Markit con tus amigos",
       placeholder: true,
       icon: <InviteIcon />,
     },
     {
       key: "privacy",
-      title: "Privacy",
-      subtitle: "Permissions and privacy settings",
+      title: "Privacidad",
+      subtitle: "Permisos y configuración de privacidad",
       placeholder: true,
       icon: <PrivacyIcon />,
     },
     {
       key: "accessibility",
-      title: "Accessibility",
-      subtitle: "Reading and display preferences",
+      title: "Accesibilidad",
+      subtitle: "Preferencias de lectura y visualización",
       placeholder: true,
       icon: <AccessibilityIcon />,
     },
     {
       key: "communication",
-      title: "Communication",
-      subtitle: "Marketing preferences",
+      title: "Comunicación",
+      subtitle: "Preferencias de marketing",
       placeholder: true,
       icon: <BellIcon />,
     },
     {
       key: "manage-account",
-      title: "Manage Markit Account",
-      subtitle: "Profile and account options",
+      title: "Gestionar cuenta de Markit",
+      subtitle: "Opciones de perfil y cuenta",
       placeholder: true,
       icon: <UserIcon />,
     },
     {
       key: "about",
-      title: "About",
-      subtitle: "Legal, social media and information",
+      title: "Acerca de",
+      subtitle: "Legal, redes sociales e información",
       placeholder: true,
       icon: <InfoIcon />,
     },
@@ -239,7 +239,7 @@ export default function Profile() {
     }
 
     if (item.placeholder) {
-      setFlash(`${item.title} coming soon`);
+      setFlash(`${item.title} próximamente`);
     }
   }
 
@@ -274,13 +274,13 @@ export default function Profile() {
 
           <div className="min-w-0">
             <div className="text-sm text-zinc-500">
-              Hi {userName.split(" ")[0]}
+              Hola {userName.split(" ")[0]}
             </div>
             <h1 className="text-[28px] font-bold leading-tight text-zinc-950">
               {userName}
             </h1>
             <p className="mt-1 text-sm text-emerald-700">
-              Let&apos;s get shopping!
+              ¡Vamos de compras!
             </p>
           </div>
         </div>
@@ -303,17 +303,16 @@ export default function Profile() {
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
               Markit Plus
             </div>
-            <div className="mt-2 text-2xl font-bold">Try Markit Plus free</div>
+            <div className="mt-2 text-2xl font-bold">Prueba Markit Plus gratis</div>
             <div className="mt-2 max-w-[28rem] text-sm leading-5 text-emerald-50/95">
-              Placeholder membership banner for free delivery perks, special
-              promotions and more.
+              Banner de membresía de marcador de posición para beneficios de entrega gratuita, promociones especiales y más.
             </div>
 
             <button
-              onClick={() => setFlash("Markit Plus coming soon")}
+              onClick={() => setFlash("Markit Plus próximamente")}
               className="mt-4 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
             >
-              Learn more
+              Más información
             </button>
           </div>
 

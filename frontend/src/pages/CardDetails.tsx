@@ -137,7 +137,7 @@ export default function CardDetails() {
       try {
         await loadCard();
       } catch {
-        setFlash("Could not load card details");
+        setFlash("No se pudieron cargar los detalles de la tarjeta");
       } finally {
         setLoading(false);
       }
@@ -179,7 +179,7 @@ export default function CardDetails() {
       await apiDelete(`/payment-methods/${card.id}`);
       navigate("/wallet");
     } catch {
-      setFlash("Could not remove payment method");
+      setFlash("No se pudo eliminar el método de pago");
     } finally {
       setRemoving(false);
     }
@@ -200,9 +200,9 @@ export default function CardDetails() {
       <div className="mx-auto w-full max-w-2xl space-y-5 pb-8">
         <ScreenHeader onBack={() => navigate(-1)} />
         <div className="rounded-[30px] bg-white p-6 shadow-sm ring-1 ring-zinc-100">
-          <h1 className="text-2xl font-bold text-zinc-950">Card not found</h1>
+          <h1 className="text-2xl font-bold text-zinc-950">Tarjeta no encontrada</h1>
           <p className="mt-2 text-sm text-zinc-500">
-            The selected payment method could not be loaded.
+            No se pudieron cargar los detalles del método de pago seleccionado.
           </p>
 
           <button
@@ -210,7 +210,7 @@ export default function CardDetails() {
             onClick={() => navigate("/wallet")}
             className="mt-5 rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white"
           >
-            Back to Wallet
+            Volver a la cartera
           </button>
         </div>
       </div>
@@ -243,7 +243,7 @@ export default function CardDetails() {
           </div>
 
           <div className="mt-8">
-            <div className="text-sm text-zinc-500">Expiry date</div>
+            <div className="text-sm text-zinc-500">Fecha de expiración</div>
             <div className="mt-1 text-[30px] font-semibold text-zinc-950">
               {formattedExpiry}
             </div>
@@ -257,16 +257,16 @@ export default function CardDetails() {
 
       <section className="rounded-[30px] bg-white px-5 py-2 shadow-sm ring-1 ring-zinc-100">
         <ActionRow
-          title="Edit"
-          subtitle="Nickname editing can be added next"
+          title="Editar"
+          subtitle="Apodo a Visualizar"
           icon={<EditIcon />}
-          onClick={() => setFlash("Edit card coming soon")}
+          onClick={() => setFlash("Edición de tarjeta próximamente")}
         />
 
         <div className="border-t border-zinc-200" />
 
         <ActionRow
-          title={removing ? "Removing..." : "Remove payment method"}
+          title={removing ? "Eliminando..." : "Eliminar método de pago"}
           danger
           icon={<TrashIcon />}
           onClick={handleRemove}

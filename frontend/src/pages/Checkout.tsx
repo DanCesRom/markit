@@ -445,14 +445,14 @@ export default function Checkout() {
 
         <div className="mt-6 rounded-2xl bg-white">
           <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold">Delivery Address</div>
+            <div className="text-sm font-semibold">Dirección de entrega</div>
 
             {deliveryNeedsAddress && (
               <button
                 onClick={() => setAddressPickerOpen(true)}
                 className="text-xs font-semibold text-emerald-700"
               >
-                Change
+                Cambiar
               </button>
             )}
           </div>
@@ -502,7 +502,7 @@ export default function Checkout() {
                           {selectedAddress.label}
                           {selectedAddress.is_default && (
                             <span className="ml-1 text-xs font-medium text-zinc-400">
-                              default
+                              predeterminado
                             </span>
                           )}
                         </div>
@@ -521,7 +521,7 @@ export default function Checkout() {
         </div>
 
         <div className="mt-6">
-          <div className="text-sm font-semibold">Payment Method</div>
+          <div className="text-sm font-semibold">Método de pago</div>
 
           <div className="mt-3 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
             <button
@@ -539,7 +539,7 @@ export default function Checkout() {
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg">👛</span>
-                <div className="text-sm font-semibold">Cash</div>
+                <div className="text-sm font-semibold">Efectivo</div>
               </div>
               <span
                 className={`grid h-5 w-5 place-items-center rounded-full border ${
@@ -560,7 +560,7 @@ export default function Checkout() {
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg">💳</span>
-                <div className="text-sm font-semibold">Card</div>
+                <div className="text-sm font-semibold">Tarjeta</div>
               </div>
               <span
                 className={`grid h-5 w-5 place-items-center rounded-full border ${
@@ -626,7 +626,7 @@ export default function Checkout() {
 
         {filteredSupermarkets.length > 0 && (
           <div className="mt-6 space-y-3">
-            <div className="text-sm font-semibold">Items to order</div>
+            <div className="text-sm font-semibold">Artículos a ordenar</div>
 
             {filteredSupermarkets.map((g) => (
               <div
@@ -674,16 +674,16 @@ export default function Checkout() {
         <div className="fixed bottom-14 left-0 right-0 z-40 border-t bg-white">
           <div className="mx-auto max-w-[430px] px-4 py-3">
             <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-              <div className="mb-3 text-sm font-semibold text-zinc-900">Detail payment</div>
+              <div className="mb-3 text-sm font-semibold text-zinc-900">Detalle de pago</div>
 
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-zinc-500">Total price:</span>
+                  <span className="text-zinc-500">Precio total:</span>
                   <span className="font-medium text-zinc-800">{money(itemsSubtotal)}</span>
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-zinc-500">Shipping:</span>
+                  <span className="text-zinc-500">Envío:</span>
                   <span
                     className={
                       deliveryFee > 0
@@ -691,27 +691,27 @@ export default function Checkout() {
                         : "text-zinc-400 line-through"
                     }
                   >
-                    {deliveryFee > 0 ? money(deliveryFee) : "Free"}
+                    {deliveryFee > 0 ? money(deliveryFee) : "Gratis"}
                   </span>
                 </div>
 
                 <div className="h-px bg-zinc-200" />
 
                 <div className="flex items-center justify-between gap-3">
-                  <span className="font-semibold text-zinc-900">Total payment</span>
+                  <span className="font-semibold text-zinc-900">Pago total</span>
                   <span className="text-base font-bold text-red-600">{money(totalPayment)}</span>
                 </div>
               </div>
 
               <div className="mt-3 text-[11px] leading-4 text-zinc-500">
-                Click “Place Order” means you agree to comply with the{" "}
-                <span className="font-medium text-emerald-700">terms of use</span>.
+                Al hacer clic en “Realizar pedido” significa que acepta cumplir con los{" "}
+                <span className="font-medium text-emerald-700">términos de uso</span>.
               </div>
             </div>
 
             {deliveryNeedsAddress && !selectedAddressId && (
               <div className="mt-2 text-xs text-zinc-600">
-                Selecciona una dirección para Delivery.
+                Selecciona una dirección para el envío.
               </div>
             )}
 
@@ -724,7 +724,7 @@ export default function Checkout() {
               onClick={submit}
               className="mt-3 w-full rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
             >
-              {submitting ? "Procesando…" : "Place Order"}
+              {submitting ? "Procesando…" : "Realizar pedido"}
             </button>
           </div>
         </div>

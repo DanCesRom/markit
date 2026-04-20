@@ -93,7 +93,7 @@ export default function Verify() {
       // ✅ entra directo al Home / App
       navigate("/", { replace: true });
     } catch (e: any) {
-      setErr(e?.message ?? "This code is not correct");
+      setErr(e?.message ?? "Este código no es correcto");
       setDigits(Array(6).fill(""));
       setTimeout(() => focusIndex(0), 0);
     } finally {
@@ -102,7 +102,7 @@ export default function Verify() {
   }
 
   function getNewCode() {
-    alert("MVP: Get new code luego");
+    alert("MVP: Obtener nuevo código luego");
   }
 
   return (
@@ -117,12 +117,12 @@ export default function Verify() {
           ←
         </button>
 
-        <h1 className="text-xl font-semibold text-zinc-900">Enter 6 Digits Code</h1>
+        <h1 className="text-xl font-semibold text-zinc-900">Ingrese el código de 6 dígitos</h1>
       </div>
 
       <p className="text-sm text-zinc-600 text-center">
-        Enter the 6 digits code that you received <br />
-        on your SMS
+        Ingrese el código de 6 dígitos que recibió <br />
+        en su SMS
       </p>
 
       {hasError && (
@@ -185,7 +185,7 @@ export default function Verify() {
               strokeLinecap="round"
             />
           </svg>
-          Get new code
+          Obtener nuevo código
         </button>
 
         {/* Verify button */}
@@ -193,12 +193,12 @@ export default function Verify() {
           disabled={loading}
           className="mt-8 w-full rounded-full bg-[#0D1B3D] py-4 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {loading ? "Verifying…" : "Verify"}
+          {loading ? "Verificando…" : "Verificar"}
         </button>
 
         {hint && (
           <div className="pt-4 text-center text-xs text-zinc-500">
-            (MVP) code: <b>{hint}</b>
+            (MVP) código: <b>{hint}</b>
           </div>
         )}
       </form>

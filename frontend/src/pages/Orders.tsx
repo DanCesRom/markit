@@ -32,7 +32,7 @@ export default function Orders() {
     })();
   }, []);
 
-  if (loading) return <div className="text-sm text-zinc-500">Cargando órdenes…</div>;
+  if (loading) return <div className="text-sm text-zinc-500">Cargando pedidos…</div>;
 
   return (
     <div className="space-y-4">
@@ -43,7 +43,7 @@ export default function Orders() {
         >
           ←
         </button>
-        <div className="text-xl font-semibold">My orders</div>
+        <div className="text-xl font-semibold">Mis pedidos</div>
       </div>
 
       {err && (
@@ -54,7 +54,7 @@ export default function Orders() {
 
       {(data?.orders ?? []).length === 0 && (
         <div className="rounded-2xl border bg-white p-4 text-sm text-zinc-600">
-          No tienes órdenes todavía.
+          No tienes pedidos todavía.
         </div>
       )}
 
@@ -70,7 +70,7 @@ export default function Orders() {
               <div className="text-sm font-semibold">{money(o.total)}</div>
             </div>
             <div className="mt-1 text-xs text-zinc-500">
-              Order #{o.id} • {o.status} • {o.delivery_type}
+              Pedido #{o.id} • {o.status} • {o.delivery_type}
             </div>
           </button>
         ))}

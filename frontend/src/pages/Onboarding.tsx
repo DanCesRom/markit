@@ -33,25 +33,25 @@ export default function Onboarding() {
     const slides: Slide[] = useMemo(
         () => [
             {
-                title: "Welcome to\nMarkit",
+                title: "Bienvenido a\nMarkit",
                 subtitle: "Compras en Supermercado más fácil y\nrápido.",
-                button: "Next",
+                button: "Siguiente",
                 bg: bgBase,
                 overlay: null,
                 hero: hero1,
             },
             {
-                title: "150K+ Member\nActive",
+                title: "150K+ Miembros\nActivos",
                 subtitle: "Miles compran con Markit cada día.",
-                button: "Next",
+                button: "Siguiente",
                 bg: bgBase,
                 overlay: overlayA,
                 hero: hero2,
             },
             {
-                title: "Find Fast\n& Easy",
+                title: "Rápido y Fácil",
                 subtitle: "Ofertas y entregas a tiempo.",
-                button: "Enjoy",
+                button: "Disfruta",
                 bg: bgBase,
                 overlay: null,
                 hero: hero3,

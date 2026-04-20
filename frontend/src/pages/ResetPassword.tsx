@@ -116,15 +116,15 @@ export default function ResetPassword() {
     setOk(null);
 
     if (!resetToken) {
-      setErr("Missing reset token. Please try again.");
+      setErr("Falta el token de restablecimiento. Por favor, inténtalo de nuevo.");
       return;
     }
     if (pw1.length < 6) {
-      setErr("Password must be at least 6 characters");
+      setErr("La contraseña debe tener al menos 6 caracteres");
       return;
     }
     if (pw1 !== pw2) {
-      setErr("Passwords do not match");
+      setErr("Las contraseñas no coinciden");
       return;
     }
 
@@ -155,14 +155,14 @@ export default function ResetPassword() {
           ←
         </button>
 
-        <h1 className="text-xl font-semibold text-zinc-900">Reset Password</h1>
+        <h1 className="text-xl font-semibold text-zinc-900">Restablecer contraseña</h1>
       </div>
 
-      <p className="text-sm text-zinc-600">Create a new password for your account.</p>
+      <p className="text-sm text-zinc-600">Crea una nueva contraseña para tu cuenta.</p>
 
       <form onSubmit={submit} className="mt-6 space-y-3">
         <PasswordField
-          label="New password"
+          label="Nueva contraseña"
           value={pw1}
           onChange={setPw1}
           show={show1}
@@ -173,7 +173,7 @@ export default function ResetPassword() {
         />
 
         <PasswordField
-          label="Confirm password"
+          label="Confirmar contraseña"
           value={pw2}
           onChange={setPw2}
           show={show2}
@@ -190,7 +190,7 @@ export default function ResetPassword() {
           disabled={loading}
           className="mt-2 w-full rounded-2xl bg-[#0D1B3D] py-3 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {loading ? "Saving…" : "Save"}
+          {loading ? "Guardando…" : "Guardar"}
         </button>
       </form>
     </AuthLayout>

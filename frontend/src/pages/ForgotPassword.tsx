@@ -98,7 +98,7 @@ export default function ForgotPassword() {
     setErr(null);
 
     if (!canRequest) {
-      setErr("Enter your email first");
+      setErr("Ingresa tu correo electrónico aquí");
       return;
     }
 
@@ -146,11 +146,11 @@ export default function ForgotPassword() {
           ←
         </button>
 
-        <h1 className="text-xl font-semibold text-zinc-900">Forgot Password</h1>
+        <h1 className="text-xl font-semibold text-zinc-900">Olvidé mi contraseña</h1>
       </div>
 
       <p className="text-sm text-zinc-600">
-        Select a method to receive the confirmation code.
+        Selecciona un método para recibir el código de confirmación.
       </p>
 
       {/* Email input */}
@@ -190,7 +190,7 @@ export default function ForgotPassword() {
         onClick={continueNext}
         className="mt-10 w-full rounded-full bg-[#0D1B3D] py-4 text-sm font-semibold text-white disabled:opacity-50"
       >
-        {loading ? "Loading…" : "Continue"}
+        {loading ? "Cargando…" : "Continuar"}
       </button>
     </AuthLayout>
   );

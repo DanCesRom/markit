@@ -255,7 +255,7 @@ export default function CategoryDetail() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Find fresh groceries..."
+          placeholder={`Buscar en ${title}...`}
           className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
         />
       </div>
