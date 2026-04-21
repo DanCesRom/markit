@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { apiDelete, apiGet, apiPatch, apiPost } from "../lib/api";
 import { isLoggedIn } from "../lib/auth";
 import type { Address } from "../lib/types";
@@ -14,6 +14,15 @@ import sirenaWide from "../assets/supermarket/sirena3x4.svg";
 import avatarImg from "../assets/home/avatar.png";
 import mapPinIcon from "../assets/home/map-pin.svg";
 import findIcon from "../assets/home/find.png";
+
+type MeResponse = {
+    id?: number;
+    first_name?: string | null;
+    last_name?: string | null;
+    name?: string | null;
+    full_name?: string | null;
+    email?: string | null;
+};
 
 type SupermarketApiItem = {
     id: number;
@@ -95,6 +104,20 @@ function formatMoney(value?: number | string | null, currency?: string | null) {
     const n = Number(value ?? 0);
     const symbol = currency?.trim() || "RD$";
     return `${symbol} ${Number.isFinite(n) ? n.toFixed(2) : "0.00"}`;
+}
+
+function getFirstNameFromMe(me: MeResponse | null | undefined) {
+    const full =
+        me?.full_name?.trim() ||
+        me?.name?.trim() ||
+        `${me?.first_name ?? ""} ${me?.last_name ?? ""}`.trim() ||
+        me?.first_name?.trim() ||
+        "";
+
+    if (!full) return "Usuario";
+
+    const first = full.split(/\s+/).filter(Boolean)[0];
+    return first || "Usuario";
 }
 
 function SectionHeader(props: { title: string; to?: string }) {
@@ -277,43 +300,152 @@ function ProductMiniCard(props: {
     );
 }
 
-function HomeSearchBar() {
-    const [q, setQ] = useState("");
-    const navigate = useNavigate();
-
-    function submitSearch() {
-        const value = q.trim();
-        if (!value) return;
-        navigate(`/search?q=${encodeURIComponent(value)}`);
+function HomeSearchBar(props: { onOpen: () => void }) {
+    function openFromGesture() {
+        props.onOpen();
     }
 
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                submitSearch();
+        <div
+            role="button"
+            tabIndex={0}
+            onClick={openFromGesture}
+            onTouchStart={openFromGesture}
+            onPointerDown={openFromGesture}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFromGesture();
+                }
             }}
-            className="w-full"
+            className="flex w-full cursor-pointer items-center rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-left shadow-sm transition hover:border-zinc-300 active:scale-[0.998]"
+            aria-label="Abrir búsqueda"
         >
-            <div className="flex items-center rounded-2xl border border-zinc-200 bg-white px-4 py-3 shadow-sm">
-                <input
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    placeholder="¿Qué te gustaría cocinar hoy?"
-                    className="w-full bg-transparent pr-3 text-[16px] leading-normal outline-none placeholder:text-zinc-400"
-                    enterKeyHint="search"
-                />
+            <span className="pointer-events-none text-zinc-400">
+                <img src={findIcon} alt="Buscar" className="h-5 w-5 opacity-70" />
+            </span>
 
-                <button
-                    type="submit"
-                    className="grid h-8 w-8 shrink-0 place-items-center"
-                    aria-label="search"
-                    title="Search"
+            <span className="pointer-events-none ml-3 flex-1 truncate text-[16px] leading-normal text-zinc-400">
+                ¿Qué te gustaría cocinar hoy?
+            </span>
+        </div>
+    );
+}
+
+function HomeSearchOverlay(props: {
+    open: boolean;
+    onClose: () => void;
+    onSubmit: (value: string) => void;
+}) {
+    const [q, setQ] = useState("");
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        if (!props.open) {
+            setQ("");
+            return;
+        }
+
+        const focusInput = () => {
+            if (!inputRef.current) return;
+            inputRef.current.focus({ preventScroll: true });
+            inputRef.current.select();
+        };
+
+        focusInput();
+
+        const t1 = window.setTimeout(focusInput, 20);
+        const t2 = window.setTimeout(focusInput, 80);
+        const t3 = window.setTimeout(focusInput, 180);
+        const t4 = window.setTimeout(focusInput, 320);
+
+        return () => {
+            window.clearTimeout(t1);
+            window.clearTimeout(t2);
+            window.clearTimeout(t3);
+            window.clearTimeout(t4);
+        };
+    }, [props.open]);
+
+    useEffect(() => {
+        if (!props.open) return;
+
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = prev;
+        };
+    }, [props.open]);
+
+    if (!props.open) return null;
+
+    const suggestions = [
+        "arroz",
+        "leche",
+        "pechuga de pollo",
+        "quiero hacer un sancocho",
+        "ingredientes para mofongo",
+        "pasta y queso",
+    ];
+
+    return (
+        <div className="fixed inset-0 z-[100] bg-white">
+            <div className="mx-auto max-w-[430px] px-4 pb-6 pt-1">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const value = q.trim();
+                        if (!value) return;
+                        props.onSubmit(value);
+                    }}
+                    className="sticky top-0 bg-white pb-2 pt-1"
                 >
-                    <img src={findIcon} alt="Go" className="h-4 w-4 opacity-70" />
-                </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={props.onClose}
+                            className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-xl text-zinc-700 transition hover:bg-zinc-50"
+                            aria-label="Volver"
+                        >
+                            ←
+                        </button>
+
+                        <div className="flex flex-1 items-center gap-3 rounded-[22px] border border-zinc-200 bg-white px-4 py-3 shadow-sm transition focus-within:border-emerald-600 focus-within:ring-4 focus-within:ring-emerald-100">
+                            <span className="text-xl leading-none text-zinc-400">⌕</span>
+                            <input
+                                ref={inputRef}
+                                value={q}
+                                onChange={(e) => setQ(e.target.value)}
+                                placeholder="Buscar productos o recetas"
+                                className="w-full bg-transparent text-[16px] leading-normal outline-none placeholder:text-[14px] placeholder:text-zinc-400"
+                                enterKeyHint="search"
+                                autoCapitalize="sentences"
+                                autoCorrect="on"
+                                spellCheck
+                            />
+                        </div>
+                    </div>
+                </form>
+
+                <div className="space-y-3">
+                    <div className="text-sm font-semibold text-zinc-800">Sugerencias</div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {suggestions.map((item) => (
+                            <button
+                                key={item}
+                                type="button"
+                                onClick={() => props.onSubmit(item)}
+                                className="rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+                            >
+                                {item}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     );
 }
 
@@ -467,16 +599,20 @@ export default function Home() {
     const navigate = useNavigate();
 
     const [addressPickerOpen, setAddressPickerOpen] = useState(false);
+    const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
     const [activeAddress, setActiveAddress] = useState<Address | null>(null);
     const [supermarkets, setSupermarkets] = useState<SupermarketApiItem[]>([]);
     const [bestSale, setBestSale] = useState<PopularProduct[]>([]);
     const [recommendations, setRecommendations] = useState<PopularProduct[]>([]);
     const [homeErr, setHomeErr] = useState<string | null>(null);
+    const [me, setMe] = useState<MeResponse | null>(null);
 
     const [cartMap, setCartMap] = useState<
         Record<number, { cart_item_id: number; quantity: number }>
     >({});
     const [busyProductId, setBusyProductId] = useState<number | null>(null);
+
+    const firstName = useMemo(() => getFirstNameFromMe(me), [me]);
 
     async function refreshCart() {
         if (!isLoggedIn()) {
@@ -502,6 +638,30 @@ export default function Home() {
             setCartMap({});
         }
     }
+
+    useEffect(() => {
+        let active = true;
+
+        (async () => {
+            if (!isLoggedIn()) {
+                if (active) setMe(null);
+                return;
+            }
+
+            try {
+                const data = await apiGet<MeResponse>("/auth/me");
+                if (!active) return;
+                setMe(data);
+            } catch {
+                if (!active) return;
+                setMe(null);
+            }
+        })();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -538,17 +698,6 @@ export default function Home() {
 
             try {
                 setHomeErr(null);
-
-                if (nacionalId) {
-                    await apiGet<PopularProductsResponse>(
-                        `/supermarkets/${nacionalId}/popular-products?limit=8`
-                    );
-                }
-                if (sirenaId) {
-                    await apiGet<PopularProductsResponse>(
-                        `/supermarkets/${sirenaId}/popular-products?limit=8`
-                    );
-                }
 
                 const [nacionalRes, sirenaRes] = await Promise.all([
                     nacionalId
@@ -705,7 +854,9 @@ export default function Home() {
                         />
 
                         <div className="leading-tight">
-                            <div className="text-sm font-semibold text-zinc-600">Hola Sofia</div>
+                            <div className="text-sm font-semibold text-zinc-600">
+                                Hola {firstName}
+                            </div>
                             <div className="text-xl font-semibold text-emerald-700">
                                 ¡Vamos de compras!
                             </div>
@@ -724,7 +875,7 @@ export default function Home() {
                     </button>
                 </div>
 
-                <HomeSearchBar />
+                <HomeSearchBar onOpen={() => setSearchOverlayOpen(true)} />
                 <PromoBanner />
 
                 {homeErr && (
@@ -787,6 +938,14 @@ export default function Home() {
                     </div>
                 </section>
             </div>
+
+            <HomeSearchOverlay
+                open={searchOverlayOpen}
+                onClose={() => setSearchOverlayOpen(false)}
+                onSubmit={(value) => {
+                    navigate(`/search?q=${encodeURIComponent(value)}`);
+                }}
+            />
 
             <AddressPickerSheet
                 open={addressPickerOpen}

@@ -422,7 +422,7 @@ export default function Store() {
           <div className="text-[26px] font-semibold leading-tight text-zinc-950">
             {store.name}
           </div>
-          <div className="text-sm text-zinc-500">{store.address}</div>
+          {/* <div className="text-sm text-zinc-500">{store.address}</div> */}
         </div>
       </div>
 
