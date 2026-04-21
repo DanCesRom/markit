@@ -596,6 +596,8 @@ function RecipeIngredientCard(props: {
     selectedProductId: number | null;
     onSelect: (ingredientKey: string, supermarketProductId: number) => void;
 }) {
+    const [open, setOpen] = useState(false);
+
     const options = props.item.alternatives?.length
         ? props.item.alternatives
         : props.item.selected_option
@@ -671,6 +673,17 @@ function RecipeIngredientCard(props: {
                 </div>
 
                 {options.length > 1 && (
+                    <button
+                        type="button"
+                        onClick={() => setOpen((v) => !v)}
+                        className="mt-4 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50"
+                    >
+                        {open ? "Ocultar opciones" : "Ver otras opciones"}
+                        <span className={`transition ${open ? "rotate-180" : ""}`}>⌄</span>
+                    </button>
+                )}
+
+                {open && options.length > 1 && (
                     <div className="mt-4">
                         <div className="mb-2 text-sm font-semibold text-zinc-800">
                             Otras opciones
@@ -687,12 +700,13 @@ function RecipeIngredientCard(props: {
                                             key={`${opt.supermarket_id}-${opt.supermarket_product_id}-preview`}
                                             option={opt}
                                             active={active}
-                                            onClick={() =>
+                                            onClick={() => {
                                                 props.onSelect(
                                                     props.item.ingredient_key,
                                                     opt.supermarket_product_id
-                                                )
-                                            }
+                                                );
+                                                setOpen(false);
+                                            }}
                                         />
                                     );
                                 })}
