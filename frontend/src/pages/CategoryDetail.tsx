@@ -294,12 +294,12 @@ export default function CategoryDetail() {
                                     ♡
                                 </button>
 
-                                <div className="flex h-28 w-full items-center justify-center rounded-2xl bg-zinc-50 p-2">
+                                <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
                                     {p.image_url ? (
                                         <img
                                             src={p.image_url}
                                             alt={p.product_name}
-                                            className="max-h-full max-w-full object-contain object-center"
+                                            className="h-full w-full object-contain"
                                             loading="lazy"
                                         />
                                     ) : (
@@ -330,8 +330,12 @@ export default function CategoryDetail() {
                                     {qty > 0 ? (
                                         <div className="flex items-center gap-2">
                                             <button
-                                                onClick={() => decreaseQty(p.supermarket_product_id)}
-                                                disabled={busyProductId === p.supermarket_product_id}
+                                                onClick={() =>
+                                                    decreaseQty(p.supermarket_product_id)
+                                                }
+                                                disabled={
+                                                    busyProductId === p.supermarket_product_id
+                                                }
                                                 className="grid h-10 w-10 place-items-center rounded-2xl border border-zinc-200 bg-white font-bold text-zinc-800 disabled:opacity-50"
                                                 aria-label="decrease"
                                             >
@@ -343,8 +347,12 @@ export default function CategoryDetail() {
                                             </div>
 
                                             <button
-                                                onClick={() => increaseQty(p.supermarket_product_id)}
-                                                disabled={busyProductId === p.supermarket_product_id}
+                                                onClick={() =>
+                                                    increaseQty(p.supermarket_product_id)
+                                                }
+                                                disabled={
+                                                    busyProductId === p.supermarket_product_id
+                                                }
                                                 className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 font-bold text-white disabled:opacity-50"
                                                 aria-label="increase"
                                             >
@@ -355,12 +363,15 @@ export default function CategoryDetail() {
                                         <button
                                             onClick={() => addToCart(p.supermarket_product_id)}
                                             disabled={
-                                                busyProductId === p.supermarket_product_id || p.stock <= 0
+                                                busyProductId === p.supermarket_product_id ||
+                                                p.stock <= 0
                                             }
                                             className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 font-bold text-white disabled:opacity-50"
                                             aria-label="add"
                                         >
-                                            {busyProductId === p.supermarket_product_id ? "…" : "+"}
+                                            {busyProductId === p.supermarket_product_id
+                                                ? "…"
+                                                : "+"}
                                         </button>
                                     )}
                                 </div>
@@ -376,7 +387,7 @@ export default function CategoryDetail() {
                     onClick={() => loadPage(items.length, true)}
                     className="w-full rounded-2xl border bg-white py-3 text-sm font-semibold hover:bg-zinc-50 disabled:opacity-50"
                 >
-                    {loadingMore ? "Cargando…" : `Load more (${items.length}/${total})`}
+                    {loadingMore ? "Cargando…" : `Cargar Más (${items.length}/${total})`}
                 </button>
             )}
         </div>

@@ -53,110 +53,376 @@ function formatMoney(value?: number | string | null, currency?: string | null) {
     return `${symbol} ${Number.isFinite(n) ? n.toFixed(2) : "0.00"}`;
 }
 
-function sortForDisplay(items: PopularProduct[]) {
-    return [...items].sort((a, b) => {
-        const imgDiff = Number(Boolean(b.image_url)) - Number(Boolean(a.image_url));
-        if (imgDiff !== 0) return imgDiff;
-
-        const stockDiff = Number(b.stock > 0) - Number(a.stock > 0);
-        if (stockDiff !== 0) return stockDiff;
-
-        return a.price - b.price;
-    });
-}
-
 function productMatchesAny(name: string, terms: string[]) {
     return terms.some((term) => name.includes(term));
 }
 
-function pickByKeywordGroups(
+function productHasBlockedWords(name: string) {
+    return [
+        "alimento",
+        "perro",
+        "perros",
+        "cachorro",
+        "gato",
+        "gatos",
+        "mascota",
+        "shampoo",
+        "acondicionador",
+        "ampolla",
+        "tratamiento",
+        "crema",
+        "locion",
+        "loción",
+        "detergente",
+        "cloro",
+        "dog chow",
+        "purina",
+        "paws",
+    ].some((term) => name.includes(term));
+}
+
+function getDisplayPriority(item: PopularProduct) {
+    let score = 0;
+    if (item.image_url) score += 3;
+    if (item.stock > 0) score += 2;
+    if (item.is_on_sale) score += 1;
+    return score;
+}
+
+function sortForDisplay(items: PopularProduct[]) {
+    return [...items].sort((a, b) => {
+        const prio = getDisplayPriority(b) - getDisplayPriority(a);
+        if (prio !== 0) return prio;
+        return a.price - b.price;
+    });
+}
+
+function cleanProductKey(name?: string | null) {
+    return normalizeText(name)
+        .replace(/\([^)]*\)/g, " ")
+        .replace(
+            /\b(roja|rojo|verde|amarilla|amarillo|maduro|premium|extra|selecta|selecto|und|unidad|unidades|lb|libra|libras|pqte|paquete|pack|funda|botella|lata|onz|oz|ml|g|kg)\b/g,
+            " "
+        )
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function firstLetterKey(name?: string | null) {
+    const cleaned = cleanProductKey(name);
+    return cleaned.charAt(0) || "";
+}
+
+function isAllowedPopularCategory(item: PopularProduct) {
+    const cat = normalizeText(item.category_name);
+    if (!cat) return true;
+
+    return (
+        cat.includes("frutas") ||
+        cat.includes("vegetales") ||
+        cat.includes("alimentacion") ||
+        cat.includes("alimentación") ||
+        cat.includes("despensa") ||
+        cat.includes("lacteos") ||
+        cat.includes("huevos") ||
+        cat.includes("bebidas") ||
+        cat.includes("quesos") ||
+        cat.includes("panaderia") ||
+        cat.includes("reposteria")
+    );
+}
+
+function isAllowedBestSellerCategory(item: PopularProduct) {
+    const cat = normalizeText(item.category_name);
+    if (!cat) return true;
+
+    return (
+        cat.includes("alimentacion") ||
+        cat.includes("alimentación") ||
+        cat.includes("despensa") ||
+        cat.includes("lacteos") ||
+        cat.includes("huevos") ||
+        cat.includes("bebidas") ||
+        cat.includes("quesos") ||
+        cat.includes("embutidos") ||
+        cat.includes("panaderia") ||
+        cat.includes("reposteria")
+    );
+}
+
+function pickBestUnique(
     source: PopularProduct[],
-    groups: string[][],
-    excludedIds?: Set<number>
+    terms: string[],
+    usedIds: Set<number>,
+    usedNames: Set<string>,
+    usedInitials: Set<string>,
+    categoryGuard: (item: PopularProduct) => boolean,
+    options?: { blockProcessed?: boolean; avoidSameInitial?: boolean }
 ) {
-    const usedIds = new Set<number>(excludedIds ?? []);
-    const clean = source.filter((item) => item.stock > 0);
-    const result: PopularProduct[] = [];
+    const candidates = sortForDisplay(
+        source.filter((item) => {
+            const name = normalizeText(item.product_name);
+            const cleanName = cleanProductKey(item.product_name);
+            const initial = firstLetterKey(item.product_name);
 
-    for (const terms of groups) {
-        const match = sortForDisplay(
-            clean.filter((item) => {
-                const name = normalizeText(item.product_name);
-                return !usedIds.has(item.supermarket_product_id) && productMatchesAny(name, terms);
-            })
-        )[0];
+            if (options?.blockProcessed && productHasBlockedWords(name)) return false;
 
-        if (match) {
-            result.push(match);
-            usedIds.add(match.supermarket_product_id);
-        }
+            if (options?.avoidSameInitial && initial && usedInitials.has(initial)) {
+                return false;
+            }
+
+            return (
+                item.stock > 0 &&
+                categoryGuard(item) &&
+                !usedIds.has(item.supermarket_product_id) &&
+                !usedNames.has(cleanName) &&
+                productMatchesAny(name, terms)
+            );
+        })
+    );
+
+    const fallbackCandidates =
+        candidates.length > 0
+            ? candidates
+            : sortForDisplay(
+                source.filter((item) => {
+                    const name = normalizeText(item.product_name);
+                    const cleanName = cleanProductKey(item.product_name);
+
+                    if (options?.blockProcessed && productHasBlockedWords(name)) return false;
+
+                    return (
+                        item.stock > 0 &&
+                        categoryGuard(item) &&
+                        !usedIds.has(item.supermarket_product_id) &&
+                        !usedNames.has(cleanName) &&
+                        productMatchesAny(name, terms)
+                    );
+                })
+            );
+
+    const picked = fallbackCandidates[0];
+    if (!picked) return null;
+
+    usedIds.add(picked.supermarket_product_id);
+    usedNames.add(cleanProductKey(picked.product_name));
+
+    const initial = firstLetterKey(picked.product_name);
+    if (initial) usedInitials.add(initial);
+
+    return picked;
+}
+
+function pickOneFromGroup(
+    source: PopularProduct[],
+    groupTerms: string[][],
+    usedIds: Set<number>,
+    usedNames: Set<string>,
+    usedInitials: Set<string>,
+    categoryGuard: (item: PopularProduct) => boolean,
+    options?: { blockProcessed?: boolean; avoidSameInitial?: boolean }
+) {
+    for (const terms of groupTerms) {
+        const picked = pickBestUnique(
+            source,
+            terms,
+            usedIds,
+            usedNames,
+            usedInitials,
+            categoryGuard,
+            options
+        );
+        if (picked) return picked;
     }
+    return null;
+}
 
-    return result;
+function pickFallback(
+    source: PopularProduct[],
+    usedIds: Set<number>,
+    usedNames: Set<string>,
+    usedInitials: Set<string>,
+    categoryGuard: (item: PopularProduct) => boolean,
+    options?: { blockProcessed?: boolean; avoidSameInitial?: boolean }
+) {
+    const candidates = sortForDisplay(
+        source.filter((item) => {
+            const cleanName = cleanProductKey(item.product_name);
+            const name = normalizeText(item.product_name);
+            const initial = firstLetterKey(item.product_name);
+
+            if (options?.blockProcessed && productHasBlockedWords(name)) return false;
+
+            if (options?.avoidSameInitial && initial && usedInitials.has(initial)) {
+                return false;
+            }
+
+            return (
+                item.stock > 0 &&
+                categoryGuard(item) &&
+                !usedIds.has(item.supermarket_product_id) &&
+                !usedNames.has(cleanName)
+            );
+        })
+    );
+
+    const fallbackCandidates =
+        candidates.length > 0
+            ? candidates
+            : sortForDisplay(
+                source.filter((item) => {
+                    const cleanName = cleanProductKey(item.product_name);
+                    const name = normalizeText(item.product_name);
+
+                    if (options?.blockProcessed && productHasBlockedWords(name)) return false;
+
+                    return (
+                        item.stock > 0 &&
+                        categoryGuard(item) &&
+                        !usedIds.has(item.supermarket_product_id) &&
+                        !usedNames.has(cleanName)
+                    );
+                })
+            );
+
+    const picked = fallbackCandidates[0];
+    if (!picked) return null;
+
+    usedIds.add(picked.supermarket_product_id);
+    usedNames.add(cleanProductKey(picked.product_name));
+
+    const initial = firstLetterKey(picked.product_name);
+    if (initial) usedInitials.add(initial);
+
+    return picked;
 }
 
 function buildCollection(items: PopularProduct[], kind: string) {
     const source = items.filter((item) => item.stock > 0);
 
-    const popularGroups: string[][] = [
-        ["manzana", "apple"],
-        ["pera"],
-        ["guineo", "banana"],
-        ["platano"],
-        ["uva"],
-        ["naranja"],
-        ["limon"],
-        ["aguacate"],
-        ["tomate"],
-        ["cebolla"],
-        ["papa"],
-        ["zanahoria"],
-        ["lechuga"],
-        ["pepino"],
-        ["ajo"],
-        ["brocoli", "brócoli"],
-        ["fresa"],
-        ["piña", "pina"],
-        ["auyama"],
-        ["yuca"],
-        ["leche"],
-        ["huevo"],
-        ["queso"],
-        ["agua"],
-        ["jugo"],
-        ["pan"],
+    const usedIds = new Set<number>();
+    const usedNames = new Set<string>();
+    const usedInitials = new Set<string>();
+
+    const popularItems: PopularProduct[] = [];
+
+    const popularGroups: string[][][] = [
+        [["manzana roja"], ["manzana", "apple"]],
+        [["guineo", "banana"], ["platano"]],
+        [["papa"], ["tomate"], ["zanahoria"]],
+        [["pera"], ["uva"], ["naranja"], ["fresa"], ["piña", "pina"], ["agua"], ["pan"]],
     ];
 
-    const bestsellerGroups: string[][] = [
-        ["arroz"],
-        ["aceite"],
-        ["leche"],
-        ["huevo"],
-        ["pan"],
-        ["pollo"],
-        ["queso"],
-        ["pasta", "espagueti", "spaghetti"],
-        ["agua"],
-        ["coca cola", "cocacola"],
-        ["pepsi", "refresco"],
-        ["detergente"],
-        ["papel higienico"],
-        ["avena"],
-        ["azucar"],
-        ["cafe"],
-        ["salami"],
-        ["mayonesa"],
-        ["ketchup"],
-        ["servilleta"],
-        ["jabon", "jabón"],
-        ["cloro"],
-    ];
-
-    if (kind === "vendidos") {
-        return pickByKeywordGroups(source, bestsellerGroups);
+    for (const group of popularGroups) {
+        const picked = pickOneFromGroup(
+            source,
+            group,
+            usedIds,
+            usedNames,
+            usedInitials,
+            isAllowedPopularCategory,
+            { blockProcessed: false, avoidSameInitial: true }
+        );
+        if (picked) popularItems.push(picked);
     }
 
-    return pickByKeywordGroups(source, popularGroups);
+    while (popularItems.length < 12) {
+        const fallback = pickFallback(
+            source,
+            usedIds,
+            usedNames,
+            usedInitials,
+            isAllowedPopularCategory,
+            { blockProcessed: false, avoidSameInitial: true }
+        );
+        if (!fallback) break;
+        popularItems.push(fallback);
+    }
+
+    const bestsellerItems: PopularProduct[] = [];
+
+    const pantryGroups: string[][] = [
+        ["arroz"],
+        ["aceite"],
+        ["pasta", "espagueti", "spaghetti"],
+        ["pan"],
+        ["avena"],
+    ];
+
+    const dairyGroups: string[][] = [
+        ["leche"],
+        ["huevo"],
+        ["queso"],
+    ];
+
+    const beverageGroups: string[][] = [
+        ["agua"],
+        ["jugo"],
+        ["coca cola", "cocacola"],
+        ["pepsi", "refresco"],
+        ["cafe"],
+    ];
+
+    const otherGroups: string[][] = [
+        ["pollo"],
+        ["salami"],
+        ["jamon", "jamón"],
+        ["galleta", "galletas"],
+    ];
+
+    const soldPantry = pickOneFromGroup(
+        source,
+        pantryGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldPantry) bestsellerItems.push(soldPantry);
+
+    const soldDairy = pickOneFromGroup(
+        source,
+        dairyGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldDairy) bestsellerItems.push(soldDairy);
+
+    const soldDrink = pickOneFromGroup(
+        source,
+        beverageGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldDrink) bestsellerItems.push(soldDrink);
+
+    const soldOther = pickOneFromGroup(
+        source,
+        otherGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldOther) bestsellerItems.push(soldOther);
+
+    while (bestsellerItems.length < 12) {
+        const fallback = pickFallback(
+            source,
+            usedIds,
+            usedNames,
+            usedInitials,
+            isAllowedBestSellerCategory
+        );
+        if (!fallback) break;
+        bestsellerItems.push(fallback);
+    }
+
+    return kind === "vendidos" ? bestsellerItems : popularItems;
 }
 
 function Heart() {
@@ -185,12 +451,12 @@ function ProductMiniCard(props: {
                 <Heart />
             </div>
 
-            <div className="grid h-24 place-items-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+            <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
                 {p.image_url ? (
                     <img
                         src={p.image_url}
                         alt={p.product_name}
-                        className="h-full w-full bg-white object-contain p-2"
+                        className="h-full w-full object-contain"
                         loading="lazy"
                         draggable={false}
                     />
@@ -422,12 +688,7 @@ export default function HomeCollection() {
                         ←
                     </button>
 
-                    <div>
-                        <div className="text-[22px] font-semibold text-zinc-950">{title}</div>
-                        <div className="text-sm text-zinc-500">
-                            Selección curada con productos reales
-                        </div>
-                    </div>
+                    <div className="text-[22px] font-semibold text-zinc-950">{title}</div>
                 </div>
             </div>
 

@@ -237,136 +237,387 @@ function uniqueByProductId(items: PopularProduct[]) {
     });
 }
 
-function categoryBoost(item: PopularProduct) {
-    const cat = normalizeText(item.category_name);
-    if (!cat) return 0;
-
-    if (cat.includes("frutas")) return 8;
-    if (cat.includes("vegetales")) return 8;
-    if (cat.includes("alimentacion")) return 5;
-    if (cat.includes("despensa")) return 5;
-    if (cat.includes("lacteos")) return 5;
-    if (cat.includes("huevos")) return 5;
-    if (cat.includes("bebidas")) return 4;
-    if (cat.includes("limpieza")) return 4;
-    if (cat.includes("quesos")) return 4;
-    if (cat.includes("embutidos")) return 4;
-    if (cat.includes("carnes")) return 4;
-    return 0;
-}
-
 function productMatchesAny(name: string, terms: string[]) {
     return terms.some((term) => name.includes(term));
 }
 
+function productHasBlockedWords(name: string) {
+    return [
+        "alimento",
+        "perro",
+        "perros",
+        "cachorro",
+        "gato",
+        "gatos",
+        "mascota",
+        "shampoo",
+        "acondicionador",
+        "ampolla",
+        "tratamiento",
+        "crema",
+        "locion",
+        "loción",
+        "detergente",
+        "cloro",
+        "suavizante",
+        "dog chow",
+        "purina",
+        "paws",
+    ].some((term) => name.includes(term));
+}
+
+function getDisplayPriority(item: PopularProduct) {
+    let score = 0;
+    if (item.image_url) score += 3;
+    if (item.stock > 0) score += 2;
+    if (item.is_on_sale) score += 1;
+    return score;
+}
+
 function sortForDisplay(items: PopularProduct[]) {
     return [...items].sort((a, b) => {
-        const imgDiff = Number(Boolean(b.image_url)) - Number(Boolean(a.image_url));
-        if (imgDiff !== 0) return imgDiff;
-
-        const stockDiff = Number(b.stock > 0) - Number(a.stock > 0);
-        if (stockDiff !== 0) return stockDiff;
-
+        const prio = getDisplayPriority(b) - getDisplayPriority(a);
+        if (prio !== 0) return prio;
         return a.price - b.price;
     });
 }
 
-function pickByKeywordGroups(
+function cleanProductKey(name?: string | null) {
+    return normalizeText(name)
+        .replace(/\([^)]*\)/g, " ")
+        .replace(
+            /\b(roja|rojo|verde|amarilla|amarillo|maduro|premium|extra|selecta|selecto|und|unidad|unidades|lb|libra|libras|pqte|paquete|pack|funda|botella|lata|onz|oz|ml|g|kg)\b/g,
+            " "
+        )
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function firstLetterKey(name?: string | null) {
+    const cleaned = cleanProductKey(name);
+    return cleaned.charAt(0) || "";
+}
+
+function isAllowedPopularCategory(item: PopularProduct) {
+    const cat = normalizeText(item.category_name);
+    if (!cat) return true;
+
+    return (
+        cat.includes("frutas") ||
+        cat.includes("vegetales") ||
+        cat.includes("alimentacion") ||
+        cat.includes("alimentación") ||
+        cat.includes("despensa") ||
+        cat.includes("lacteos") ||
+        cat.includes("huevos") ||
+        cat.includes("bebidas") ||
+        cat.includes("quesos") ||
+        cat.includes("panaderia") ||
+        cat.includes("reposteria")
+    );
+}
+
+function isAllowedBestSellerCategory(item: PopularProduct) {
+    const cat = normalizeText(item.category_name);
+    if (!cat) return true;
+
+    return (
+        cat.includes("alimentacion") ||
+        cat.includes("alimentación") ||
+        cat.includes("despensa") ||
+        cat.includes("lacteos") ||
+        cat.includes("huevos") ||
+        cat.includes("bebidas") ||
+        cat.includes("quesos") ||
+        cat.includes("embutidos") ||
+        cat.includes("panaderia") ||
+        cat.includes("reposteria")
+    );
+}
+
+function pickBestUnique(
     source: PopularProduct[],
-    groups: string[][],
-    maxItems: number,
-    excludedIds?: Set<number>
+    terms: string[],
+    usedIds: Set<number>,
+    usedNames: Set<string>,
+    usedInitials: Set<string>,
+    categoryGuard: (item: PopularProduct) => boolean,
+    options?: { blockProcessed?: boolean; avoidSameInitial?: boolean }
 ) {
-    const usedIds = new Set<number>(excludedIds ?? []);
-    const clean = source.filter((item) => item.stock > 0);
-    const result: PopularProduct[] = [];
+    const candidates = sortForDisplay(
+        source.filter((item) => {
+            const name = normalizeText(item.product_name);
+            const cleanName = cleanProductKey(item.product_name);
+            const initial = firstLetterKey(item.product_name);
 
-    for (const terms of groups) {
-        const match = sortForDisplay(
-            clean.filter((item) => {
-                const name = normalizeText(item.product_name);
-                return !usedIds.has(item.supermarket_product_id) && productMatchesAny(name, terms);
-            })
-        )[0];
+            if (options?.blockProcessed && productHasBlockedWords(name)) return false;
 
-        if (match) {
-            result.push(match);
-            usedIds.add(match.supermarket_product_id);
-        }
+            if (
+                options?.avoidSameInitial &&
+                initial &&
+                usedInitials.has(initial)
+            ) {
+                return false;
+            }
 
-        if (result.length >= maxItems) break;
-    }
+            return (
+                item.stock > 0 &&
+                categoryGuard(item) &&
+                !usedIds.has(item.supermarket_product_id) &&
+                !usedNames.has(cleanName) &&
+                productMatchesAny(name, terms)
+            );
+        })
+    );
 
-    if (result.length < maxItems) {
-        const fallback = sortForDisplay(
-            clean
-                .filter((item) => !usedIds.has(item.supermarket_product_id))
-                .sort((a, b) => categoryBoost(b) - categoryBoost(a))
+    const fallbackCandidates =
+        candidates.length > 0
+            ? candidates
+            : sortForDisplay(
+                source.filter((item) => {
+                    const name = normalizeText(item.product_name);
+                    const cleanName = cleanProductKey(item.product_name);
+
+                    if (options?.blockProcessed && productHasBlockedWords(name)) return false;
+
+                    return (
+                        item.stock > 0 &&
+                        categoryGuard(item) &&
+                        !usedIds.has(item.supermarket_product_id) &&
+                        !usedNames.has(cleanName) &&
+                        productMatchesAny(name, terms)
+                    );
+                })
+            );
+
+    const picked = fallbackCandidates[0];
+    if (!picked) return null;
+
+    usedIds.add(picked.supermarket_product_id);
+    usedNames.add(cleanProductKey(picked.product_name));
+
+    const initial = firstLetterKey(picked.product_name);
+    if (initial) usedInitials.add(initial);
+
+    return picked;
+}
+
+function pickOneFromGroup(
+    source: PopularProduct[],
+    groupTerms: string[][],
+    usedIds: Set<number>,
+    usedNames: Set<string>,
+    usedInitials: Set<string>,
+    categoryGuard: (item: PopularProduct) => boolean,
+    options?: { blockProcessed?: boolean; avoidSameInitial?: boolean }
+) {
+    for (const terms of groupTerms) {
+        const picked = pickBestUnique(
+            source,
+            terms,
+            usedIds,
+            usedNames,
+            usedInitials,
+            categoryGuard,
+            options
         );
-
-        for (const item of fallback) {
-            if (result.length >= maxItems) break;
-            result.push(item);
-            usedIds.add(item.supermarket_product_id);
-        }
+        if (picked) return picked;
     }
+    return null;
+}
 
-    return result;
+function pickFallback(
+    source: PopularProduct[],
+    usedIds: Set<number>,
+    usedNames: Set<string>,
+    usedInitials: Set<string>,
+    categoryGuard: (item: PopularProduct) => boolean,
+    options?: { blockProcessed?: boolean; avoidSameInitial?: boolean }
+) {
+    const candidates = sortForDisplay(
+        source.filter((item) => {
+            const cleanName = cleanProductKey(item.product_name);
+            const name = normalizeText(item.product_name);
+            const initial = firstLetterKey(item.product_name);
+
+            if (options?.blockProcessed && productHasBlockedWords(name)) return false;
+
+            if (
+                options?.avoidSameInitial &&
+                initial &&
+                usedInitials.has(initial)
+            ) {
+                return false;
+            }
+
+            return (
+                item.stock > 0 &&
+                categoryGuard(item) &&
+                !usedIds.has(item.supermarket_product_id) &&
+                !usedNames.has(cleanName)
+            );
+        })
+    );
+
+    const fallbackCandidates =
+        candidates.length > 0
+            ? candidates
+            : sortForDisplay(
+                source.filter((item) => {
+                    const cleanName = cleanProductKey(item.product_name);
+                    const name = normalizeText(item.product_name);
+
+                    if (options?.blockProcessed && productHasBlockedWords(name)) return false;
+
+                    return (
+                        item.stock > 0 &&
+                        categoryGuard(item) &&
+                        !usedIds.has(item.supermarket_product_id) &&
+                        !usedNames.has(cleanName)
+                    );
+                })
+            );
+
+    const picked = fallbackCandidates[0];
+    if (!picked) return null;
+
+    usedIds.add(picked.supermarket_product_id);
+    usedNames.add(cleanProductKey(picked.product_name));
+
+    const initial = firstLetterKey(picked.product_name);
+    if (initial) usedInitials.add(initial);
+
+    return picked;
 }
 
 function buildFakeHomeCollections(items: PopularProduct[]) {
     const source = uniqueByProductId(items).filter((item) => item.stock > 0);
 
-    const popularGroups: string[][] = [
-        ["manzana", "apple"],
-        ["pera"],
-        ["guineo", "banana"],
-        ["platano"],
-        ["uva"],
-        ["naranja"],
-        ["limon"],
-        ["aguacate"],
-        ["tomate"],
-        ["cebolla"],
-        ["papa"],
-        ["zanahoria"],
-        ["lechuga"],
-        ["pepino"],
-        ["ajo"],
-        ["brocoli", "brócoli"],
-        ["fresa"],
-        ["piña", "pina"],
-        ["auyama"],
-        ["yuca"],
+    const usedIds = new Set<number>();
+    const usedNames = new Set<string>();
+    const usedInitials = new Set<string>();
+
+    const popularPreview: PopularProduct[] = [];
+
+    const popularGroups: string[][][] = [
+        [["manzana roja"], ["manzana", "apple"]],
+        [["guineo", "banana"], ["platano"]],
+        [["papa"], ["tomate"], ["zanahoria"]],
+        [["pera"], ["uva"], ["naranja"], ["fresa"], ["piña", "pina"], ["agua"], ["pan"]],
     ];
 
-    const popular = pickByKeywordGroups(source, popularGroups, 4);
-    const popularIds = new Set(popular.map((item) => item.supermarket_product_id));
+    for (const group of popularGroups) {
+        const picked = pickOneFromGroup(
+            source,
+            group,
+            usedIds,
+            usedNames,
+            usedInitials,
+            isAllowedPopularCategory,
+            { blockProcessed: false, avoidSameInitial: true }
+        );
+        if (picked) popularPreview.push(picked);
+    }
 
-    const bestsellerGroups: string[][] = [
+    while (popularPreview.length < 4) {
+        const fallback = pickFallback(
+            source,
+            usedIds,
+            usedNames,
+            usedInitials,
+            isAllowedPopularCategory,
+            { blockProcessed: false, avoidSameInitial: true }
+        );
+        if (!fallback) break;
+        popularPreview.push(fallback);
+    }
+
+    const bestsellerPreview: PopularProduct[] = [];
+
+    const pantryGroups: string[][] = [
         ["arroz"],
         ["aceite"],
-        ["leche"],
-        ["huevo"],
-        ["pan"],
-        ["pollo"],
-        ["queso"],
         ["pasta", "espagueti", "spaghetti"],
-        ["agua"],
-        ["coca cola", "cocacola", "pepsi", "refresco"],
-        ["detergente"],
-        ["papel higienico"],
+        ["pan"],
         ["avena"],
-        ["azucar"],
-        ["cafe"],
-        ["salami"],
     ];
 
-    const bestsellers = pickByKeywordGroups(source, bestsellerGroups, 4, popularIds);
+    const dairyGroups: string[][] = [
+        ["leche"],
+        ["huevo"],
+        ["queso"],
+    ];
+
+    const beverageGroups: string[][] = [
+        ["agua"],
+        ["jugo"],
+        ["coca cola", "cocacola"],
+        ["pepsi", "refresco"],
+        ["cafe"],
+    ];
+
+    const otherGroups: string[][] = [
+        ["pollo"],
+        ["salami"],
+        ["jamon", "jamón"],
+        ["galleta", "galletas"],
+    ];
+
+    const soldPantry = pickOneFromGroup(
+        source,
+        pantryGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldPantry) bestsellerPreview.push(soldPantry);
+
+    const soldDairy = pickOneFromGroup(
+        source,
+        dairyGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldDairy) bestsellerPreview.push(soldDairy);
+
+    const soldDrink = pickOneFromGroup(
+        source,
+        beverageGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldDrink) bestsellerPreview.push(soldDrink);
+
+    const soldOther = pickOneFromGroup(
+        source,
+        otherGroups,
+        usedIds,
+        usedNames,
+        usedInitials,
+        isAllowedBestSellerCategory
+    );
+    if (soldOther) bestsellerPreview.push(soldOther);
+
+    while (bestsellerPreview.length < 4) {
+        const fallback = pickFallback(
+            source,
+            usedIds,
+            usedNames,
+            usedInitials,
+            isAllowedBestSellerCategory
+        );
+        if (!fallback) break;
+        bestsellerPreview.push(fallback);
+    }
 
     return {
-        popularPreview: popular,
-        bestsellerPreview: bestsellers,
+        popularPreview,
+        bestsellerPreview,
     };
 }
 
@@ -428,7 +679,7 @@ function StoreCard(props: {
                 <img
                     src={s.logoSrc}
                     alt={s.logoAlt}
-                    className="h-full w-full bg-white object-contain p-2"
+                    className="h-full w-full object-contain"
                     draggable={false}
                 />
             </div>
@@ -474,12 +725,12 @@ function ProductMiniCard(props: {
                 <Heart active={false} />
             </div>
 
-            <div className="grid h-24 place-items-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+            <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
                 {p.image_url ? (
                     <img
                         src={p.image_url}
                         alt={p.product_name}
-                        className="h-full w-full bg-white object-contain p-2"
+                        className="h-full w-full object-contain"
                         loading="lazy"
                         draggable={false}
                     />
@@ -488,8 +739,8 @@ function ProductMiniCard(props: {
                 )}
             </div>
 
-            <div className="mt-3">
-                <div className="line-clamp-2 min-h-[40px] text-sm font-semibold text-zinc-900">
+            <div className="mt-2 flex flex-col">
+                <div className="line-clamp-3 text-[15px] font-semibold leading-[1.2] text-zinc-900">
                     {p.product_name}
                 </div>
 
@@ -497,57 +748,64 @@ function ProductMiniCard(props: {
                     {p.supermarket_name || p.category_name || "Producto"}
                 </div>
 
-                <div className="mt-3 flex items-end justify-between gap-2">
-                    <div className="min-w-0">
-                        <div className="text-lg font-semibold text-zinc-950">
+                <div className="mt-2">
+                    {/* PRECIO */}
+                    <div>
+                        <div className="truncate text-[15px] font-semibold leading-none text-zinc-950">
                             {formatMoney(p.price, p.currency)}
                         </div>
+
                         {showStrike ? (
-                            <div className="text-[11px] text-zinc-400 line-through">
+                            <div className="mt-1 truncate text-[10px] leading-none text-zinc-400 line-through">
                                 {formatMoney(p.regular_price, p.currency)}
                             </div>
                         ) : (
-                            <div className="text-[11px] text-zinc-400">&nbsp;</div>
+                            <div className="mt-1 text-[10px] leading-none text-zinc-400">
+                                &nbsp;
+                            </div>
                         )}
                     </div>
 
-                    {props.quantityInCart > 0 ? (
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={props.onDecrease}
-                                disabled={props.busy}
-                                className="grid h-10 w-10 place-items-center rounded-2xl border border-zinc-200 bg-white text-lg font-bold text-zinc-800 disabled:opacity-50"
-                                aria-label="decrease"
-                            >
-                                –
-                            </button>
+                    {/* CONTROLES ABAJO */}
+                    <div className="mt-1 flex items-center justify-end">
+                        {props.quantityInCart > 0 ? (
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    type="button"
+                                    onClick={props.onDecrease}
+                                    disabled={props.busy}
+                                    className="grid h-[36px] w-[36px] place-items-center rounded-[14px] border border-zinc-200 bg-white text-[18px] font-bold leading-none text-zinc-800 disabled:opacity-50"
+                                    aria-label="decrease"
+                                >
+                                    –
+                                </button>
 
-                            <div className="min-w-[20px] text-center text-sm font-semibold text-zinc-900">
-                                {props.quantityInCart}
+                                <div className="w-[18px] text-center text-sm font-semibold text-zinc-900">
+                                    {props.quantityInCart}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={props.onIncrease}
+                                    disabled={props.busy}
+                                    className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-700 text-[18px] font-bold leading-none text-white disabled:opacity-50"
+                                    aria-label="increase"
+                                >
+                                    +
+                                </button>
                             </div>
-
+                        ) : (
                             <button
                                 type="button"
-                                onClick={props.onIncrease}
-                                disabled={props.busy}
-                                className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 text-lg font-bold text-white disabled:opacity-50"
-                                aria-label="increase"
+                                onClick={props.onAdd}
+                                disabled={props.busy || p.stock <= 0}
+                                className="grid h-[44px] w-[44px] place-items-center rounded-[16px] bg-emerald-600 text-[22px] leading-none text-white shadow-sm disabled:opacity-50"
+                                aria-label="add"
                             >
-                                +
+                                {props.busy ? "…" : "+"}
                             </button>
-                        </div>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={props.onAdd}
-                            disabled={props.busy || p.stock <= 0}
-                            className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-600 text-2xl text-white shadow-sm disabled:opacity-50"
-                            aria-label="add"
-                        >
-                            {props.busy ? "…" : "+"}
-                        </button>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -745,8 +1003,12 @@ export default function Home() {
     const [activeAddress, setActiveAddress] = useState<Address | null>(null);
     const [supermarkets, setSupermarkets] = useState<SupermarketApiItem[]>([]);
     const [popularProducts, setPopularProducts] = useState<PopularProduct[]>([]);
-    const [bestSellingProducts, setBestSellingProducts] = useState<PopularProduct[]>([]);
-    const [allShowcaseProducts, setAllShowcaseProducts] = useState<PopularProduct[]>([]);
+    const [bestSellingProducts, setBestSellingProducts] = useState<PopularProduct[]>(
+        []
+    );
+    const [allShowcaseProducts, setAllShowcaseProducts] = useState<PopularProduct[]>(
+        []
+    );
     const [homeErr, setHomeErr] = useState<string | null>(null);
     const [me, setMe] = useState<MeResponse | null>(null);
 
@@ -765,7 +1027,8 @@ export default function Home() {
 
         try {
             const cart = await apiGet<CartResponse>("/cart");
-            const next: Record<number, { cart_item_id: number; quantity: number }> = {};
+            const next: Record<number, { cart_item_id: number; quantity: number }> =
+                {};
 
             for (const group of cart.supermarkets ?? []) {
                 for (const item of group.items ?? []) {
