@@ -282,98 +282,96 @@ export default function CategoryDetail() {
                     return (
                         <div
                             key={p.supermarket_product_id}
-                            className="rounded-3xl border bg-white p-3 shadow-sm"
+                            className="relative rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm"
                         >
-                            <div className="relative">
-                                <button
-                                    className="absolute right-2 top-2 z-10 text-zinc-300 hover:text-zinc-500"
-                                    aria-label="favorite"
-                                    type="button"
-                                    onClick={() => { }}
-                                >
-                                    ♡
-                                </button>
+                            <button
+                                className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-300 hover:text-zinc-500"
+                                aria-label="favorite"
+                                type="button"
+                                onClick={() => { }}
+                            >
+                                ♥
+                            </button>
 
-                                <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-                                    {p.image_url ? (
-                                        <img
-                                            src={p.image_url}
-                                            alt={p.product_name}
-                                            className="h-full w-full object-contain"
-                                            loading="lazy"
-                                        />
-                                    ) : (
-                                        <span className="text-3xl">🥫</span>
-                                    )}
-                                </div>
+                            <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+                                {p.image_url ? (
+                                    <img
+                                        src={p.image_url}
+                                        alt={p.product_name}
+                                        className="h-full w-full object-contain"
+                                        loading="lazy"
+                                        draggable={false}
+                                    />
+                                ) : (
+                                    <span className="text-3xl">🥫</span>
+                                )}
                             </div>
 
-                            <div className="mt-3 space-y-2">
-                                <div className="min-h-[40px] text-sm font-semibold leading-snug">
+                            <div className="mt-2 flex flex-col">
+                                <div className="line-clamp-3 text-[15px] font-semibold leading-[1.2] text-zinc-900">
                                     {p.product_name}
                                 </div>
 
-                                <div className="flex items-end justify-between gap-2">
+                                <div className="mt-1 text-xs text-zinc-400">
+                                    {title}
+                                </div>
+
+                                <div className="mt-0">
                                     <div>
-                                        <div className="text-base font-semibold">
+                                        <div className="truncate text-[15px] font-semibold leading-none text-zinc-950">
                                             {p.currency} {Number(p.price).toFixed(2)}
                                         </div>
+
                                         {p.is_on_sale && p.regular_price ? (
-                                            <div className="text-[11px] text-zinc-400 line-through">
+                                            <div className="mt-[2px] truncate text-[10px] leading-none text-zinc-400 line-through">
                                                 {p.currency} {Number(p.regular_price).toFixed(2)}
                                             </div>
                                         ) : (
-                                            <div className="text-[11px] text-zinc-400">&nbsp;</div>
+                                            <div className="mt-1 text-[0px] leading-none text-zinc-400">
+                                                &nbsp;
+                                            </div>
                                         )}
                                     </div>
 
-                                    {qty > 0 ? (
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={() =>
-                                                    decreaseQty(p.supermarket_product_id)
-                                                }
-                                                disabled={
-                                                    busyProductId === p.supermarket_product_id
-                                                }
-                                                className="grid h-10 w-10 place-items-center rounded-2xl border border-zinc-200 bg-white font-bold text-zinc-800 disabled:opacity-50"
-                                                aria-label="decrease"
-                                            >
-                                                –
-                                            </button>
+                                    <div className="mt-[2px] flex items-center justify-end">
+                                        {qty > 0 ? (
+                                            <div className="flex items-center gap-1.5">
+                                                <button
+                                                    onClick={() => decreaseQty(p.supermarket_product_id)}
+                                                    disabled={busyProductId === p.supermarket_product_id}
+                                                    className="grid h-[36px] w-[36px] place-items-center rounded-[14px] border border-zinc-200 bg-white text-[18px] font-bold leading-none text-zinc-800 disabled:opacity-50"
+                                                    aria-label="decrease"
+                                                >
+                                                    –
+                                                </button>
 
-                                            <div className="min-w-[20px] text-center text-sm font-semibold">
-                                                {qty}
+                                                <div className="w-[18px] text-center text-sm font-semibold text-zinc-900">
+                                                    {qty}
+                                                </div>
+
+                                                <button
+                                                    onClick={() => increaseQty(p.supermarket_product_id)}
+                                                    disabled={busyProductId === p.supermarket_product_id}
+                                                    className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-700 text-[18px] font-bold leading-none text-white disabled:opacity-50"
+                                                    aria-label="increase"
+                                                >
+                                                    +
+                                                </button>
                                             </div>
-
+                                        ) : (
                                             <button
-                                                onClick={() =>
-                                                    increaseQty(p.supermarket_product_id)
-                                                }
+                                                onClick={() => addToCart(p.supermarket_product_id)}
                                                 disabled={
-                                                    busyProductId === p.supermarket_product_id
+                                                    busyProductId === p.supermarket_product_id ||
+                                                    p.stock <= 0
                                                 }
-                                                className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 font-bold text-white disabled:opacity-50"
-                                                aria-label="increase"
+                                                className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-600 text-[22px] leading-none text-white shadow-sm disabled:opacity-50"
+                                                aria-label="add"
                                             >
-                                                +
+                                                {busyProductId === p.supermarket_product_id ? "…" : "+"}
                                             </button>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            onClick={() => addToCart(p.supermarket_product_id)}
-                                            disabled={
-                                                busyProductId === p.supermarket_product_id ||
-                                                p.stock <= 0
-                                            }
-                                            className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 font-bold text-white disabled:opacity-50"
-                                            aria-label="add"
-                                        >
-                                            {busyProductId === p.supermarket_product_id
-                                                ? "…"
-                                                : "+"}
-                                        </button>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

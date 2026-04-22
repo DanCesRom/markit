@@ -675,7 +675,10 @@ function StoreCard(props: {
                 <Heart active={s.favorite} />
             </div>
 
-            <div className="grid h-20 place-items-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+            <div
+                className={`grid h-20 place-items-center overflow-hidden rounded-2xl border border-zinc-200 ${s.name.toLowerCase() === "sirena" ? "bg-[#FFD84D]" : "bg-white"
+                    }`}
+            >
                 <img
                     src={s.logoSrc}
                     alt={s.logoAlt}
@@ -720,7 +723,7 @@ function ProductMiniCard(props: {
         typeof p.regular_price === "number" && p.regular_price > p.price;
 
     return (
-        <div className="relative rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md">
+        <div className="relative rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md">
             <div className="absolute right-3 top-3">
                 <Heart active={false} />
             </div>
@@ -748,26 +751,24 @@ function ProductMiniCard(props: {
                     {p.supermarket_name || p.category_name || "Producto"}
                 </div>
 
-                <div className="mt-2">
-                    {/* PRECIO */}
+                <div className="mt-0">
                     <div>
                         <div className="truncate text-[15px] font-semibold leading-none text-zinc-950">
                             {formatMoney(p.price, p.currency)}
                         </div>
 
                         {showStrike ? (
-                            <div className="mt-1 truncate text-[10px] leading-none text-zinc-400 line-through">
+                            <div className="mt-[2px] truncate text-[10px] leading-none text-zinc-400 line-through">
                                 {formatMoney(p.regular_price, p.currency)}
                             </div>
                         ) : (
-                            <div className="mt-1 text-[10px] leading-none text-zinc-400">
+                            <div className="mt-1 text-[0px] leading-none text-zinc-400">
                                 &nbsp;
                             </div>
                         )}
                     </div>
 
-                    {/* CONTROLES ABAJO */}
-                    <div className="mt-1 flex items-center justify-end">
+                    <div className="mt-[2px] flex items-center justify-end">
                         {props.quantityInCart > 0 ? (
                             <div className="flex items-center gap-1.5">
                                 <button
@@ -799,7 +800,7 @@ function ProductMiniCard(props: {
                                 type="button"
                                 onClick={props.onAdd}
                                 disabled={props.busy || p.stock <= 0}
-                                className="grid h-[44px] w-[44px] place-items-center rounded-[16px] bg-emerald-600 text-[22px] leading-none text-white shadow-sm disabled:opacity-50"
+                                className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-600 text-[22px] leading-none text-white shadow-sm disabled:opacity-50"
                                 aria-label="add"
                             >
                                 {props.busy ? "…" : "+"}

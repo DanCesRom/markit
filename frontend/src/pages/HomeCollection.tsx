@@ -446,7 +446,7 @@ function ProductMiniCard(props: {
         typeof p.regular_price === "number" && p.regular_price > p.price;
 
     return (
-        <div className="relative rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md">
+        <div className="relative rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md">
             <div className="absolute right-3 top-3">
                 <Heart />
             </div>
@@ -465,8 +465,8 @@ function ProductMiniCard(props: {
                 )}
             </div>
 
-            <div className="mt-3">
-                <div className="line-clamp-2 min-h-[40px] text-sm font-semibold text-zinc-900">
+            <div className="mt-2 flex flex-col">
+                <div className="line-clamp-3 text-[15px] font-semibold leading-[1.2] text-zinc-900">
                     {p.product_name}
                 </div>
 
@@ -474,54 +474,59 @@ function ProductMiniCard(props: {
                     {p.supermarket_name || p.category_name || "Producto"}
                 </div>
 
-                <div className="mt-3 flex items-end justify-between gap-2">
-                    <div className="min-w-0">
-                        <div className="text-lg font-semibold text-zinc-950">
+                <div className="mt-0">
+                    <div>
+                        <div className="truncate text-[15px] font-semibold leading-none text-zinc-950">
                             {formatMoney(p.price, p.currency)}
                         </div>
+
                         {showStrike ? (
-                            <div className="text-[11px] text-zinc-400 line-through">
+                            <div className="mt-[2px] truncate text-[10px] leading-none text-zinc-400 line-through">
                                 {formatMoney(p.regular_price, p.currency)}
                             </div>
                         ) : (
-                            <div className="text-[11px] text-zinc-400">&nbsp;</div>
+                            <div className="mt-1 text-[0px] leading-none text-zinc-400">
+                                &nbsp;
+                            </div>
                         )}
                     </div>
 
-                    {props.quantityInCart > 0 ? (
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={props.onDecrease}
-                                disabled={props.busy}
-                                className="grid h-10 w-10 place-items-center rounded-2xl border border-zinc-200 bg-white text-lg font-bold text-zinc-800 disabled:opacity-50"
-                            >
-                                –
-                            </button>
+                    <div className="mt-[2px] flex items-center justify-end">
+                        {props.quantityInCart > 0 ? (
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    type="button"
+                                    onClick={props.onDecrease}
+                                    disabled={props.busy}
+                                    className="grid h-[36px] w-[36px] place-items-center rounded-[14px] border border-zinc-200 bg-white text-[18px] font-bold leading-none text-zinc-800 disabled:opacity-50"
+                                >
+                                    –
+                                </button>
 
-                            <div className="min-w-[20px] text-center text-sm font-semibold text-zinc-900">
-                                {props.quantityInCart}
+                                <div className="w-[18px] text-center text-sm font-semibold text-zinc-900">
+                                    {props.quantityInCart}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={props.onIncrease}
+                                    disabled={props.busy}
+                                    className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-700 text-[18px] font-bold leading-none text-white disabled:opacity-50"
+                                >
+                                    +
+                                </button>
                             </div>
-
+                        ) : (
                             <button
                                 type="button"
-                                onClick={props.onIncrease}
-                                disabled={props.busy}
-                                className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 text-lg font-bold text-white disabled:opacity-50"
+                                onClick={props.onAdd}
+                                disabled={props.busy || p.stock <= 0}
+                                className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-600 text-[22px] leading-none text-white shadow-sm disabled:opacity-50"
                             >
-                                +
+                                {props.busy ? "…" : "+"}
                             </button>
-                        </div>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={props.onAdd}
-                            disabled={props.busy || p.stock <= 0}
-                            className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-600 text-2xl text-white shadow-sm disabled:opacity-50"
-                        >
-                            {props.busy ? "…" : "+"}
-                        </button>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

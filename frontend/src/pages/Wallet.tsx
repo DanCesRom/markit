@@ -349,7 +349,7 @@ export default function Wallet() {
         className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-black"
       >
         <PlusIcon />
-        Add payment method
+        Agregar método de pago
       </button>
     </div>
   );

@@ -4,7 +4,7 @@ import { apiDelete, apiGet, apiPatch, apiPost } from "../lib/api";
 import { isLoggedIn } from "../lib/auth";
 
 import nacionalSquare from "../assets/supermarket/Nacional2x2.jpg";
-import nacionalWide from "../assets/supermarket/Nacional3x4.webp";
+import nacionalWide from "../assets/supermarket/Nacional3x4.jpg";
 import sirenaWide from "../assets/supermarket/sirena3x4.svg";
 
 type StoreDetail = {
@@ -87,7 +87,7 @@ function getStoreVisuals(storeName?: string) {
     return {
       heroSrc: sirenaWide,
       heroAlt: "Supermercado Sirena",
-      heroBg: "bg-[#fff6cc]",
+      heroBg: "bg-[#FFD84D]",
     };
   }
 
@@ -111,13 +111,13 @@ function ProductCard(props: {
     typeof p.regular_price === "number" && p.regular_price > p.price;
 
   return (
-    <div className="rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm">
-      <div className="grid h-28 place-items-center overflow-hidden rounded-2xl bg-zinc-100">
+    <div className="relative rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
+      <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
         {p.image_url ? (
           <img
             src={p.image_url}
             alt={p.product_name}
-            className="h-full w-full object-contain p-2"
+            className="h-full w-full object-contain"
             loading="lazy"
             draggable={false}
           />
@@ -126,77 +126,81 @@ function ProductCard(props: {
         )}
       </div>
 
-      <div className="mt-3">
-        <div className="line-clamp-2 min-h-[40px] text-sm font-semibold text-zinc-900">
+      <div className="mt-2 flex flex-col">
+        <div className="line-clamp-3 text-[15px] font-semibold leading-[1.2] text-zinc-900">
           {p.product_name}
         </div>
 
-        <div className="mt-1 text-xs text-zinc-500">
+        <div className="mt-1 text-xs text-zinc-400">
           {p.category_name || "Producto popular"}
         </div>
 
-        <div className="mt-3">
-          {showStrike ? (
-            <div className="text-xs text-zinc-400 line-through">
-              {formatMoney(p.regular_price, p.currency)}
+        <div className="mt-0">
+          <div>
+            <div className="truncate text-[15px] font-semibold leading-none text-zinc-950">
+              {formatMoney(p.price, p.currency)}
             </div>
-          ) : (
-            <div className="text-xs text-zinc-400">&nbsp;</div>
-          )}
 
-          <div className="text-lg font-semibold text-zinc-950">
-            {formatMoney(p.price, p.currency)}
-          </div>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <div
-            className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-              p.stock > 0
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-zinc-100 text-zinc-500"
-            }`}
-          >
-            {p.stock > 0 ? "Disponible" : "Sin stock"}
-          </div>
-
-          {props.quantityInCart > 0 ? (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={props.onDecrease}
-                disabled={props.busy}
-                className="grid h-10 w-10 place-items-center rounded-2xl border border-zinc-200 bg-white text-lg font-bold text-zinc-800 disabled:opacity-50"
-                aria-label="decrease"
-              >
-                –
-              </button>
-
-              <div className="min-w-[20px] text-center text-sm font-semibold text-zinc-900">
-                {props.quantityInCart}
+            {showStrike ? (
+              <div className="mt-[2px] truncate text-[10px] leading-none text-zinc-400 line-through">
+                {formatMoney(p.regular_price, p.currency)}
               </div>
+            ) : (
+              <div className="mt-1 text-[0px] leading-none text-zinc-400">
+                &nbsp;
+              </div>
+            )}
+          </div>
 
+          <div className="mt-[2px] flex items-center justify-between gap-2">
+            <div
+              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                p.stock > 0
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "bg-zinc-100 text-zinc-500"
+              }`}
+            >
+              {p.stock > 0 ? "" : "Sin stock"}
+            </div>
+
+            {props.quantityInCart > 0 ? (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={props.onDecrease}
+                  disabled={props.busy}
+                  className="grid h-[36px] w-[36px] place-items-center rounded-[14px] border border-zinc-200 bg-white text-[18px] font-bold leading-none text-zinc-800 disabled:opacity-50"
+                  aria-label="decrease"
+                >
+                  –
+                </button>
+
+                <div className="w-[18px] text-center text-sm font-semibold text-zinc-900">
+                  {props.quantityInCart}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={props.onIncrease}
+                  disabled={props.busy}
+                  className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-700 text-[18px] font-bold leading-none text-white disabled:opacity-50"
+                  aria-label="increase"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                onClick={props.onIncrease}
-                disabled={props.busy}
-                className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 text-lg font-bold text-white disabled:opacity-50"
-                aria-label="increase"
+                onClick={props.onAdd}
+                disabled={props.busy || p.stock <= 0}
+                className="grid h-[36px] w-[36px] place-items-center rounded-[14px] bg-emerald-600 text-[22px] leading-none text-white shadow-sm disabled:opacity-50"
+                aria-label="add"
               >
-                +
+                {props.busy ? "…" : "+"}
               </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={props.onAdd}
-              disabled={props.busy || p.stock <= 0}
-              className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-700 text-lg font-bold text-white disabled:opacity-50"
-              aria-label="add"
-            >
-              {props.busy ? "…" : "+"}
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

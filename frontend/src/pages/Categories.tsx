@@ -194,7 +194,7 @@ export default function Categories() {
                             className="rounded-3xl border bg-white p-4 shadow-sm transition hover:shadow-md"
                         >
                             <div className="flex flex-col items-center gap-3">
-                                <div className="grid h-20 w-full place-items-center rounded-2xl bg-zinc-50">
+                                <div className="grid h-20 w-full place-items-center rounded-2xl">
                                     {art ? (
                                         <img
                                             src={art}
