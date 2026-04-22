@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { apiDelete, apiGet, apiPatch, apiPost } from "../lib/api";
 import { isLoggedIn } from "../lib/auth";
 import type { Address } from "../lib/types";
@@ -9,7 +9,7 @@ import AddressPickerSheet, {
 } from "../components/address/AddressPickerSheet";
 
 import nacionalSquare from "../assets/supermarket/Nacional2x2.jpg";
-import nacionalWide from "../assets/supermarket/Nacional3x4.webp";
+import nacionalWide from "../assets/supermarket/Nacional3x4.jpg";
 import sirenaWide from "../assets/supermarket/sirena3x4.svg";
 import avatarImg from "../assets/home/avatar.png";
 import mapPinIcon from "../assets/home/map-pin.svg";
@@ -38,8 +38,6 @@ type Store = {
     favorite?: boolean;
     logoSrc: string;
     logoAlt: string;
-    logoFit?: "contain" | "cover";
-    logoPadding?: boolean;
 };
 
 type PopularProduct = {
@@ -120,19 +118,279 @@ function getFirstNameFromMe(me: MeResponse | null | undefined) {
     return first || "Usuario";
 }
 
-function SectionHeader(props: { title: string; to?: string }) {
+function normalizeText(value?: string | null) {
+    return (value ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+function cleanCommaSpaces(v: string) {
+    return v
+        .replace(/\s+,/g, ",")
+        .replace(/,\s*,+/g, ", ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function dedupeCommaParts(v: string) {
+    const seen = new Set<string>();
+
+    return v
+        .split(",")
+        .map((x) => x.trim())
+        .filter((x) => {
+            if (!x) return false;
+            const key = x.toLowerCase();
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        })
+        .join(", ");
+}
+
+function buildShortAddress(address: Address) {
+    const first =
+        address.line1?.trim() ||
+        address.formatted_address?.split(",")[0]?.trim() ||
+        "";
+
+    const second = address.city?.trim() || address.state?.trim() || "";
+
+    return cleanCommaSpaces(
+        dedupeCommaParts([first, second].filter(Boolean).join(", "))
+    );
+}
+
+function buildLongAddress(address: Address) {
+    const formatted = cleanCommaSpaces(address.formatted_address?.trim() || "");
+
+    if (formatted) {
+        return dedupeCommaParts(formatted);
+    }
+
+    return cleanCommaSpaces(
+        dedupeCommaParts(
+            [
+                address.line1,
+                address.line2 || "",
+                address.city || "",
+                address.state || "",
+                address.postal_code || "",
+            ]
+                .filter((x) => String(x).trim().length > 0)
+                .join(", ")
+        )
+    );
+}
+
+function getAddressButtonText(address: Address | null) {
+    if (!address) return "Elige dirección";
+
+    const label = (address.label || "").trim();
+    if (label && !GENERIC_LABELS.has(label.toLowerCase())) {
+        return label;
+    }
+
+    const shortAddress = buildShortAddress(address);
+    return shortAddress || label || "Elige dirección";
+}
+
+function pickActiveAddress(list: Address[]) {
+    const storedId = getStoredActiveAddressId();
+    if (storedId) {
+        const found = list.find((x) => x.id === storedId);
+        if (found) return found;
+    }
+
+    return list.find((x) => x.is_default) ?? list[0] ?? null;
+}
+
+function findMarketIdByName(
+    supermarkets: SupermarketApiItem[],
+    nameNeedle: string
+) {
+    const found = supermarkets.find((s) =>
+        s.name.toLowerCase().includes(nameNeedle.toLowerCase())
+    );
+    return found ? String(found.id) : "";
+}
+
+function attachStoreName(
+    items: PopularProduct[],
+    supermarket_id: number,
+    supermarket_name: string
+) {
+    return items.map((item) => ({
+        ...item,
+        supermarket_id,
+        supermarket_name,
+    }));
+}
+
+function uniqueByProductId(items: PopularProduct[]) {
+    const used = new Set<number>();
+    return items.filter((item) => {
+        if (used.has(item.supermarket_product_id)) return false;
+        used.add(item.supermarket_product_id);
+        return true;
+    });
+}
+
+function categoryBoost(item: PopularProduct) {
+    const cat = normalizeText(item.category_name);
+    if (!cat) return 0;
+
+    if (cat.includes("frutas")) return 8;
+    if (cat.includes("vegetales")) return 8;
+    if (cat.includes("alimentacion")) return 5;
+    if (cat.includes("despensa")) return 5;
+    if (cat.includes("lacteos")) return 5;
+    if (cat.includes("huevos")) return 5;
+    if (cat.includes("bebidas")) return 4;
+    if (cat.includes("limpieza")) return 4;
+    if (cat.includes("quesos")) return 4;
+    if (cat.includes("embutidos")) return 4;
+    if (cat.includes("carnes")) return 4;
+    return 0;
+}
+
+function productMatchesAny(name: string, terms: string[]) {
+    return terms.some((term) => name.includes(term));
+}
+
+function sortForDisplay(items: PopularProduct[]) {
+    return [...items].sort((a, b) => {
+        const imgDiff = Number(Boolean(b.image_url)) - Number(Boolean(a.image_url));
+        if (imgDiff !== 0) return imgDiff;
+
+        const stockDiff = Number(b.stock > 0) - Number(a.stock > 0);
+        if (stockDiff !== 0) return stockDiff;
+
+        return a.price - b.price;
+    });
+}
+
+function pickByKeywordGroups(
+    source: PopularProduct[],
+    groups: string[][],
+    maxItems: number,
+    excludedIds?: Set<number>
+) {
+    const usedIds = new Set<number>(excludedIds ?? []);
+    const clean = source.filter((item) => item.stock > 0);
+    const result: PopularProduct[] = [];
+
+    for (const terms of groups) {
+        const match = sortForDisplay(
+            clean.filter((item) => {
+                const name = normalizeText(item.product_name);
+                return !usedIds.has(item.supermarket_product_id) && productMatchesAny(name, terms);
+            })
+        )[0];
+
+        if (match) {
+            result.push(match);
+            usedIds.add(match.supermarket_product_id);
+        }
+
+        if (result.length >= maxItems) break;
+    }
+
+    if (result.length < maxItems) {
+        const fallback = sortForDisplay(
+            clean
+                .filter((item) => !usedIds.has(item.supermarket_product_id))
+                .sort((a, b) => categoryBoost(b) - categoryBoost(a))
+        );
+
+        for (const item of fallback) {
+            if (result.length >= maxItems) break;
+            result.push(item);
+            usedIds.add(item.supermarket_product_id);
+        }
+    }
+
+    return result;
+}
+
+function buildFakeHomeCollections(items: PopularProduct[]) {
+    const source = uniqueByProductId(items).filter((item) => item.stock > 0);
+
+    const popularGroups: string[][] = [
+        ["manzana", "apple"],
+        ["pera"],
+        ["guineo", "banana"],
+        ["platano"],
+        ["uva"],
+        ["naranja"],
+        ["limon"],
+        ["aguacate"],
+        ["tomate"],
+        ["cebolla"],
+        ["papa"],
+        ["zanahoria"],
+        ["lechuga"],
+        ["pepino"],
+        ["ajo"],
+        ["brocoli", "brócoli"],
+        ["fresa"],
+        ["piña", "pina"],
+        ["auyama"],
+        ["yuca"],
+    ];
+
+    const popular = pickByKeywordGroups(source, popularGroups, 4);
+    const popularIds = new Set(popular.map((item) => item.supermarket_product_id));
+
+    const bestsellerGroups: string[][] = [
+        ["arroz"],
+        ["aceite"],
+        ["leche"],
+        ["huevo"],
+        ["pan"],
+        ["pollo"],
+        ["queso"],
+        ["pasta", "espagueti", "spaghetti"],
+        ["agua"],
+        ["coca cola", "cocacola", "pepsi", "refresco"],
+        ["detergente"],
+        ["papel higienico"],
+        ["avena"],
+        ["azucar"],
+        ["cafe"],
+        ["salami"],
+    ];
+
+    const bestsellers = pickByKeywordGroups(source, bestsellerGroups, 4, popularIds);
+
+    return {
+        popularPreview: popular,
+        bestsellerPreview: bestsellers,
+    };
+}
+
+function SectionHeader(props: {
+    title: string;
+    to?: string;
+    state?: Record<string, unknown>;
+}) {
     return (
         <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-[20px] font-semibold tracking-tight">{props.title}</h2>
+            <h2 className="text-[20px] font-semibold tracking-tight text-zinc-950">
+                {props.title}
+            </h2>
 
-            {props.to && (
+            {props.to ? (
                 <Link
                     to={props.to}
-                    className="text-sm font-semibold text-emerald-600 hover:opacity-80"
+                    state={props.state}
+                    className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
                 >
-                    Ver todo
+                    Ver más
+                    <span>→</span>
                 </Link>
-            )}
+            ) : null}
         </div>
     );
 }
@@ -141,8 +399,8 @@ function Heart({ active }: { active?: boolean }) {
     return (
         <div
             className={`grid h-8 w-8 place-items-center rounded-full border bg-white ${active
-                    ? "border-emerald-200 text-emerald-600"
-                    : "border-zinc-200 text-zinc-400"
+                ? "border-emerald-200 text-emerald-600"
+                : "border-zinc-200 text-zinc-400"
                 }`}
             aria-label="favorite"
         >
@@ -154,33 +412,29 @@ function Heart({ active }: { active?: boolean }) {
 function StoreCard(props: {
     store: Store;
     showFee?: boolean;
-    bgColor?: string;
 }) {
     const s = props.store;
 
     return (
         <Link
             to={`/store/${s.id}`}
-            className="relative rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm"
+            className="relative rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
         >
             <div className="absolute right-3 top-3">
                 <Heart active={s.favorite} />
             </div>
 
-            <div
-                className={`grid h-20 place-items-center overflow-hidden rounded-2xl ${props.bgColor ?? "bg-zinc-100"
-                    }`}
-            >
+            <div className="grid h-20 place-items-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
                 <img
                     src={s.logoSrc}
                     alt={s.logoAlt}
-                    className="h-full w-full object-contain p-2"
+                    className="h-full w-full bg-white object-contain p-2"
                     draggable={false}
                 />
             </div>
 
             <div className="mt-3">
-                <div className="text-sm font-semibold leading-snug">
+                <div className="text-sm font-semibold leading-snug text-zinc-900">
                     Supermercado <br />
                     {s.name}
                 </div>
@@ -193,7 +447,7 @@ function StoreCard(props: {
                 </div>
 
                 {props.showFee && typeof s.deliveryFee === "number" && (
-                    <div className="mt-3 text-lg font-semibold">
+                    <div className="mt-3 text-lg font-semibold text-zinc-950">
                         ${s.deliveryFee.toFixed(2)}
                     </div>
                 )}
@@ -215,17 +469,17 @@ function ProductMiniCard(props: {
         typeof p.regular_price === "number" && p.regular_price > p.price;
 
     return (
-        <div className="relative rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <div className="relative rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md">
             <div className="absolute right-3 top-3">
                 <Heart active={false} />
             </div>
 
-            <div className="grid h-24 place-items-center overflow-hidden rounded-2xl bg-zinc-100">
+            <div className="grid h-24 place-items-center overflow-hidden rounded-2xl border border-zinc-200 bg-white">
                 {p.image_url ? (
                     <img
                         src={p.image_url}
                         alt={p.product_name}
-                        className="h-full w-full object-contain p-2"
+                        className="h-full w-full bg-white object-contain p-2"
                         loading="lazy"
                         draggable={false}
                     />
@@ -245,7 +499,7 @@ function ProductMiniCard(props: {
 
                 <div className="mt-3 flex items-end justify-between gap-2">
                     <div className="min-w-0">
-                        <div className="text-lg font-semibold">
+                        <div className="text-lg font-semibold text-zinc-950">
                             {formatMoney(p.price, p.currency)}
                         </div>
                         {showStrike ? (
@@ -483,118 +737,6 @@ function PromoBanner() {
     );
 }
 
-function pickActiveAddress(list: Address[]) {
-    const storedId = getStoredActiveAddressId();
-    if (storedId) {
-        const found = list.find((x) => x.id === storedId);
-        if (found) return found;
-    }
-
-    return list.find((x) => x.is_default) ?? list[0] ?? null;
-}
-
-function cleanCommaSpaces(v: string) {
-    return v
-        .replace(/\s+,/g, ",")
-        .replace(/,\s*,+/g, ", ")
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
-function dedupeCommaParts(v: string) {
-    const seen = new Set<string>();
-
-    return v
-        .split(",")
-        .map((x) => x.trim())
-        .filter((x) => {
-            if (!x) return false;
-            const key = x.toLowerCase();
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        })
-        .join(", ");
-}
-
-function buildShortAddress(address: Address) {
-    const first =
-        address.line1?.trim() ||
-        address.formatted_address?.split(",")[0]?.trim() ||
-        "";
-
-    const second = address.city?.trim() || address.state?.trim() || "";
-
-    return cleanCommaSpaces(
-        dedupeCommaParts([first, second].filter(Boolean).join(", "))
-    );
-}
-
-function buildLongAddress(address: Address) {
-    const formatted = cleanCommaSpaces(address.formatted_address?.trim() || "");
-
-    if (formatted) {
-        return dedupeCommaParts(formatted);
-    }
-
-    return cleanCommaSpaces(
-        dedupeCommaParts(
-            [
-                address.line1,
-                address.line2 || "",
-                address.city || "",
-                address.state || "",
-                address.postal_code || "",
-            ]
-                .filter((x) => String(x).trim().length > 0)
-                .join(", ")
-        )
-    );
-}
-
-function getAddressButtonText(address: Address | null) {
-    if (!address) return "Elige dirección";
-
-    const label = (address.label || "").trim();
-    if (label && !GENERIC_LABELS.has(label.toLowerCase())) {
-        return label;
-    }
-
-    const shortAddress = buildShortAddress(address);
-    return shortAddress || label || "Elige dirección";
-}
-
-function findMarketIdByName(
-    supermarkets: SupermarketApiItem[],
-    nameNeedle: string
-) {
-    const found = supermarkets.find((s) =>
-        s.name.toLowerCase().includes(nameNeedle.toLowerCase())
-    );
-    return found ? String(found.id) : "";
-}
-
-function attachStoreName(
-    items: PopularProduct[],
-    supermarket_id: number,
-    supermarket_name: string
-) {
-    return items.map((item) => ({
-        ...item,
-        supermarket_id,
-        supermarket_name,
-    }));
-}
-
-function uniqueByProductId(items: PopularProduct[]) {
-    const used = new Set<number>();
-    return items.filter((item) => {
-        if (used.has(item.supermarket_product_id)) return false;
-        used.add(item.supermarket_product_id);
-        return true;
-    });
-}
-
 export default function Home() {
     const navigate = useNavigate();
 
@@ -602,8 +744,9 @@ export default function Home() {
     const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
     const [activeAddress, setActiveAddress] = useState<Address | null>(null);
     const [supermarkets, setSupermarkets] = useState<SupermarketApiItem[]>([]);
-    const [bestSale, setBestSale] = useState<PopularProduct[]>([]);
-    const [recommendations, setRecommendations] = useState<PopularProduct[]>([]);
+    const [popularProducts, setPopularProducts] = useState<PopularProduct[]>([]);
+    const [bestSellingProducts, setBestSellingProducts] = useState<PopularProduct[]>([]);
+    const [allShowcaseProducts, setAllShowcaseProducts] = useState<PopularProduct[]>([]);
     const [homeErr, setHomeErr] = useState<string | null>(null);
     const [me, setMe] = useState<MeResponse | null>(null);
 
@@ -673,7 +816,7 @@ export default function Home() {
                     setStoredActiveAddressId(chosen.id);
                 }
             } catch {
-                // ignore for now
+                // ignore
             }
         })();
     }, []);
@@ -684,7 +827,7 @@ export default function Home() {
                 const rows = await apiGet<SupermarketApiItem[]>("/supermarkets");
                 setSupermarkets(rows ?? []);
             } catch {
-                // ignore for now
+                // ignore
             }
         })();
     }, []);
@@ -702,12 +845,12 @@ export default function Home() {
                 const [nacionalRes, sirenaRes] = await Promise.all([
                     nacionalId
                         ? apiGet<PopularProductsResponse>(
-                            `/supermarkets/${nacionalId}/popular-products?limit=8`
+                            `/supermarkets/${nacionalId}/popular-products?limit=60`
                         )
                         : Promise.resolve({ supermarket_id: 0, limit: 0, items: [] }),
                     sirenaId
                         ? apiGet<PopularProductsResponse>(
-                            `/supermarkets/${sirenaId}/popular-products?limit=8`
+                            `/supermarkets/${sirenaId}/popular-products?limit=60`
                         )
                         : Promise.resolve({ supermarket_id: 0, limit: 0, items: [] }),
                 ]);
@@ -717,8 +860,12 @@ export default function Home() {
                     ...attachStoreName(sirenaRes.items ?? [], sirenaId, "Sirena"),
                 ]);
 
-                setBestSale(mixed.slice(0, 4));
-                setRecommendations(mixed.slice(4, 8));
+                const collections = buildFakeHomeCollections(mixed);
+
+                setAllShowcaseProducts(mixed);
+                setPopularProducts(collections.popularPreview);
+                setBestSellingProducts(collections.bestsellerPreview);
+
                 await refreshCart();
             } catch (e: any) {
                 setHomeErr(e?.message ?? "No pude cargar productos destacados");
@@ -739,8 +886,6 @@ export default function Home() {
                 favorite: false,
                 logoSrc: nacionalWide || nacionalSquare,
                 logoAlt: "Supermercado Nacional",
-                logoFit: "contain",
-                logoPadding: true,
             },
             {
                 id: sirenaId || "2",
@@ -750,8 +895,6 @@ export default function Home() {
                 favorite: true,
                 logoSrc: sirenaWide,
                 logoAlt: "Supermercado Sirena",
-                logoFit: "contain",
-                logoPadding: true,
             },
         ];
 
@@ -849,7 +992,7 @@ export default function Home() {
                         <img
                             src={avatarImg}
                             alt="User avatar"
-                            className="h-12 w-12 rounded-full object-cover"
+                            className="h-[68px] w-[68px] rounded-full object-cover"
                             draggable={false}
                         />
 
@@ -885,19 +1028,25 @@ export default function Home() {
                 )}
 
                 <section>
-                    <SectionHeader title="Supermercados" to="/search" />
+                    <SectionHeader title="Supermercados" />
                     <div className="grid grid-cols-2 gap-4">
                         {stores[0] ? <StoreCard store={stores[0]} /> : null}
-                        {stores[1] ? (
-                            <StoreCard store={stores[1]} showFee bgColor="bg-yellow-300" />
-                        ) : null}
+                        {stores[1] ? <StoreCard store={stores[1]} showFee /> : null}
                     </div>
                 </section>
 
                 <section>
-                    <SectionHeader title="Más populares" to="/search" />
+                    <SectionHeader
+                        title="Más populares"
+                        to="/home/collection/populares"
+                        state={{
+                            title: "Más populares",
+                            kind: "populares",
+                            items: allShowcaseProducts,
+                        }}
+                    />
                     <div className="grid grid-cols-2 gap-4">
-                        {bestSale.map((p) => {
+                        {popularProducts.map((p) => {
                             const cartEntry = cartMap[p.supermarket_product_id];
                             const qty = cartEntry?.quantity ?? 0;
 
@@ -917,9 +1066,17 @@ export default function Home() {
                 </section>
 
                 <section>
-                    <SectionHeader title="Mejores vendidos" to="/search" />
+                    <SectionHeader
+                        title="Más vendidos"
+                        to="/home/collection/vendidos"
+                        state={{
+                            title: "Más vendidos",
+                            kind: "vendidos",
+                            items: allShowcaseProducts,
+                        }}
+                    />
                     <div className="grid grid-cols-2 gap-4">
-                        {recommendations.map((p) => {
+                        {bestSellingProducts.map((p) => {
                             const cartEntry = cartMap[p.supermarket_product_id];
                             const qty = cartEntry?.quantity ?? 0;
 

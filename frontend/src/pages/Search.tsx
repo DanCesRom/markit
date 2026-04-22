@@ -302,14 +302,14 @@ function SearchTopBar(props: {
 function ProductImage(props: { src?: string; alt: string; size?: string }) {
     return (
         <div
-            className={`grid shrink-0 place-items-center overflow-hidden rounded-[22px] bg-zinc-100 ${props.size ?? "h-20 w-20"
+            className={`grid shrink-0 place-items-center overflow-hidden rounded-[22px] border border-zinc-200 bg-white ${props.size ?? "h-20 w-20"
                 }`}
         >
             {props.src ? (
                 <img
                     src={props.src}
                     alt={props.alt}
-                    className="h-full w-full object-contain p-2"
+                    className="h-full w-full bg-white object-contain p-2"
                     loading="lazy"
                     draggable={false}
                 />
@@ -420,8 +420,8 @@ function AlternativePreview(props: {
             type="button"
             onClick={props.onClick}
             className={`w-[132px] shrink-0 snap-start rounded-[22px] border p-2.5 text-left transition ${props.active
-                    ? "border-emerald-600 bg-emerald-50 shadow-sm"
-                    : "border-zinc-200 bg-white hover:border-zinc-300"
+                ? "border-emerald-600 bg-emerald-50 shadow-sm"
+                : "border-zinc-200 bg-white hover:border-zinc-300"
                 }`}
         >
             <div className="relative">
@@ -433,8 +433,8 @@ function AlternativePreview(props: {
 
                 <div
                     className={`absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full border text-[10px] font-bold ${props.active
-                            ? "border-emerald-700 bg-emerald-700 text-white"
-                            : "border-zinc-300 bg-white text-transparent"
+                        ? "border-emerald-700 bg-emerald-700 text-white"
+                        : "border-zinc-300 bg-white text-transparent"
                         }`}
                 >
                     ✓
@@ -645,27 +645,25 @@ function RecipeIngredientCard(props: {
                             </span>
                         </div>
 
-                        <div className="mt-3 rounded-[22px] border border-zinc-200 bg-zinc-50 p-3">
-                            <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">
+                        <div className="mt-2.5 inline-block max-w-full rounded-[20px] border border-zinc-200 bg-zinc-50 px-3 py-2.5">
+                            <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-500">
                                 Selección actual
                             </div>
 
-                            <div className="mt-1 line-clamp-2 text-base font-semibold text-zinc-950">
+                            <div className="mt-1 line-clamp-2 text-[15px] font-semibold leading-5 text-zinc-950">
                                 {selected.product}
                             </div>
 
-                            <div className="mt-1 text-sm text-zinc-500">
+                            <div className="mt-1 text-[13px] text-zinc-500">
                                 {shortSupermarket(selected.supermarket)}
                             </div>
 
-                            <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
-                                <div>
-                                    <div className="text-[28px] font-semibold leading-none text-zinc-950">
-                                        {formatMoney(selected.line_total)}
-                                    </div>
-                                    <div className="mt-1 text-xs text-zinc-500">
-                                        {formatPurchaseQty(selected)}
-                                    </div>
+                            <div className="mt-2.5">
+                                <div className="text-[24px] font-semibold leading-none text-zinc-950">
+                                    {formatMoney(selected.line_total)}
+                                </div>
+                                <div className="mt-1 text-[11px] leading-4 text-zinc-500">
+                                    {formatPurchaseQty(selected)}
                                 </div>
                             </div>
                         </div>

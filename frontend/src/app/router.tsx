@@ -35,61 +35,62 @@ import AddPaymentMethod from "../pages/AddPaymentMethod";
 import AddCard from "../pages/AddCard";
 import CardDetails from "../pages/CardDetails";
 import LegalPlaceholder from "../pages/LegalPlaceholder";
+import HomeCollection from "../pages/HomeCollection";
 
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Outlet />,
-    children: [
-      // públicos
-      { path: "splash", element: <Splash /> },
-      { path: "onboarding", element: <Onboarding /> },
-      { path: "get-started", element: <GetStarted /> },
-      { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
-      { path: "verify", element: <Verify /> },
-      { path: "signup-success", element: <SignUpSuccess /> },
-      { path: "forgot-password", element: <ForgotPassword /> },
-      { path: "forgot-password/verify", element: <ForgotVerify /> },
-      { path: "reset-password", element: <ResetPassword /> },
-      { path: "reset-success", element: <ResetPasswordSuccess /> },
-      { path: "legal/terms", element: <LegalPlaceholder /> },
-      { path: "legal/privacy", element: <LegalPlaceholder /> },
-      
-
-      // privados
-      {
-        element: <RequireAuth />,
+    {
+        path: "/",
+        element: <Outlet />,
         children: [
-          {
-            element: <MainLayout />,
-            children: [
-              { index: true, element: <Home /> },
+            // públicos
+            { path: "splash", element: <Splash /> },
+            { path: "onboarding", element: <Onboarding /> },
+            { path: "get-started", element: <GetStarted /> },
+            { path: "login", element: <Login /> },
+            { path: "register", element: <Register /> },
+            { path: "verify", element: <Verify /> },
+            { path: "signup-success", element: <SignUpSuccess /> },
+            { path: "forgot-password", element: <ForgotPassword /> },
+            { path: "forgot-password/verify", element: <ForgotVerify /> },
+            { path: "reset-password", element: <ResetPassword /> },
+            { path: "reset-success", element: <ResetPasswordSuccess /> },
+            { path: "legal/terms", element: <LegalPlaceholder /> },
+            { path: "legal/privacy", element: <LegalPlaceholder /> },
+            { path: "home/collection/:kind", element: <HomeCollection /> },
 
-              { path: "search", element: <Search /> },
-              { path: "store/:storeId", element: <Store /> },
-              { path: "cart", element: <Cart /> },
-              { path: "categories", element: <Categories /> },
-              {
-                path: "categories/:supermarketId/:categorySlug",
-                element: <CategoryDetail />,
-              },
-              { path: "profile", element: <Profile /> },
-              { path: "checkout", element: <Checkout /> },
-              { path: "checkout/success", element: <CheckoutSuccess /> },
-              { path: "logout", element: <Logout /> },
-              { path: "orders", element: <Orders /> },
-              { path: "orders/:orderId/accepted", element: <OrderAccepted /> },
-              { path: "orders/:orderId/track", element: <TrackOrder /> },
+            // privados
+            {
+                element: <RequireAuth />,
+                children: [
+                    {
+                        element: <MainLayout />,
+                        children: [
+                            { index: true, element: <Home /> },
 
-              { path: "wallet", element: <Wallet /> },
-              { path: "wallet/add-method", element: <AddPaymentMethod /> },
-              { path: "wallet/add-card", element: <AddCard /> },
-              { path: "wallet/card/:cardId", element: <CardDetails /> },
-            ],
-          },
+                            { path: "search", element: <Search /> },
+                            { path: "store/:storeId", element: <Store /> },
+                            { path: "cart", element: <Cart /> },
+                            { path: "categories", element: <Categories /> },
+                            {
+                                path: "categories/:supermarketId/:categorySlug",
+                                element: <CategoryDetail />,
+                            },
+                            { path: "profile", element: <Profile /> },
+                            { path: "checkout", element: <Checkout /> },
+                            { path: "checkout/success", element: <CheckoutSuccess /> },
+                            { path: "logout", element: <Logout /> },
+                            { path: "orders", element: <Orders /> },
+                            { path: "orders/:orderId/accepted", element: <OrderAccepted /> },
+                            { path: "orders/:orderId/track", element: <TrackOrder /> },
+
+                            { path: "wallet", element: <Wallet /> },
+                            { path: "wallet/add-method", element: <AddPaymentMethod /> },
+                            { path: "wallet/add-card", element: <AddCard /> },
+                            { path: "wallet/card/:cardId", element: <CardDetails /> },
+                        ],
+                    },
+                ],
+            },
         ],
-      },
-    ],
-  },
+    },
 ]);
