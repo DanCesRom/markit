@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        font-family: "Poppins", system-ui, sans-serif;
+    }
+
+    body {
+        @apply font-sans;
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+    }
+
+    #root {
+        min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+        font: inherit;
+    }
+}
