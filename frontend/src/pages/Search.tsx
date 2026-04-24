@@ -221,29 +221,6 @@ function getPreviewLabel(productName: string) {
     return parts.slice(0, 3).join(" ");
 }
 
-function looksLikeRecipeQuery(text: string) {
-    const value = text.toLowerCase();
-    return [
-        "receta",
-        "quiero hacer",
-        "quiero cocinar",
-        "cómo hacer",
-        "como hacer",
-        "cocinar",
-        "sancocho",
-        "mangú",
-        "mangu",
-        "mofongo",
-        "lasaña",
-        "pastelón",
-        "pastelon",
-        "asopao",
-        "locro",
-        "moro",
-    ].some((x) => value.includes(x));
-}
-
-
 function SearchTopBar(props: {
     value: string;
     onChange: (v: string) => void;
