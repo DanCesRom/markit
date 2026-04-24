@@ -1,49 +1,52 @@
+# backend/app/ai/router.py
+from __future__ import annotations
+
+from decimal import Decimal
+from typing import Optional, Tuple
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from decimal import Decimal
-from typing import Optional, Tuple, Dict
-from backend.app.ai.service import parse_text, _is_bad_match_for_query
-
-from backend.app.core.database import get_db
-from backend.app.api.deps import get_current_user
-from backend.app.models.user import User
-from backend.app.models.cart import Cart
-from backend.app.models.cart_item import CartItem
-from backend.app.models.supermarket_product import SupermarketProduct
-from backend.app.models.supermarket_product_price import SupermarketProductPrice
-from backend.app.models.supermarket import Supermarket
 
 from backend.app.ai.schemas import (
-    ParseQueryRequest,
-    ParseQueryResponse,
-    AISearchRequest,
-    AISearchResponse,
     AIAddToCartRequest,
     AIAddToCartResponse,
-    SearchItemResult,
+    AIHealthResponse,
+    AISearchRequest,
+    AISearchResponse,
     AddedLine,
+    DebugUnderstandResponse,
     NotFoundLine,
+    ParseQueryRequest,
+    ParseQueryResponse,
+    RecipeAddToCartAddedLine,
+    RecipeAddToCartRequest,
+    RecipeAddToCartResponse,
+    RecipeIngredientOption,
+    RecipeIngredientResult,
     RecipeSearchRequest,
     RecipeSearchResponse,
     RecipeSearchSummary,
-    RecipeIngredientResult,
-    RecipeIngredientOption,
-    RecipeAddToCartRequest,
-    RecipeAddToCartResponse,
-    RecipeAddToCartAddedLine,
-    SmartSearchResponse,
-    SmartSearchRecipeResponse,
-    SmartSearchNormalResponse,
+    SearchItemResult,
     SearchSuggestion,
-    DebugUnderstandResponse,
-    AIHealthResponse,
+    SmartSearchNormalResponse,
+    SmartSearchRecipeResponse,
+    SmartSearchResponse,
 )
 from backend.app.ai.service import parse_text
 from backend.app.ai.tools.product_search import search_options
-from backend.app.ai.tools.recipes import find_recipe
+from backend.app.api.deps import get_current_user
+from backend.app.core.database import get_db
 from backend.app.core.llm import openai_health, ping_openai
+from backend.app.models.cart import Cart
+from backend.app.models.cart_item import CartItem
+from backend.app.models.supermarket import Supermarket
+from backend.app.models.supermarket_product import SupermarketProduct
+from backend.app.models.supermarket_product_price import SupermarketProductPrice
+from backend.app.models.user import User
 
 router = APIRouter(prefix="/ai", tags=["AI"])
+
+ParsedPayload = Tuple[str, list, object, str, object, Optional[dict]]
 
 
 def _to_decimal(v) -> Decimal:
@@ -54,12 +57,29 @@ def _to_decimal(v) -> Decimal:
     return Decimal(str(v))
 
 
+def _suggestion_to_schema(suggestion: Optional[dict]) -> Optional[SearchSuggestion]:
+    if not suggestion:
+        return None
+
+    original = str(suggestion.get("original") or "").strip()
+    corrected = str(suggestion.get("corrected") or "").strip()
+
+    if not original or not corrected:
+        return None
+
+    if original.lower() == corrected.lower():
+        return None
+
+    return SearchSuggestion(original=original, corrected=corrected)
+
+
 def _get_or_create_active_cart(db: Session, user_id: int) -> Cart:
     cart = (
         db.query(Cart)
         .filter(Cart.user_id == user_id, Cart.status == "active")
         .first()
     )
+
     if cart:
         return cart
 
@@ -70,12 +90,32 @@ def _get_or_create_active_cart(db: Session, user_id: int) -> Cart:
     return cart
 
 
-def _build_normal_search_response(
-    text: str,
+def _ingredient_display_name(query: str) -> str:
+    cleaned = str(query or "").strip()
+    if not cleaned:
+        return "Ingrediente"
+    return cleaned[:1].upper() + cleaned[1:]
+
+
+def _ingredient_key(query: str, idx: int) -> str:
+    import re
+    import unicodedata
+
+    text = str(query or "").strip().lower()
+    text = "".join(
+        ch for ch in unicodedata.normalize("NFD", text)
+        if unicodedata.category(ch) != "Mn"
+    )
+    text = re.sub(r"[^a-z0-9]+", "_", text).strip("_")
+    return text or f"ingredient_{idx + 1}"
+
+
+def _build_normal_search_response_from_parsed(
+    parsed: ParsedPayload,
     db: Session,
     limit_per_item: int,
-) -> Tuple[AISearchResponse, Optional[Dict]]:
-    intent, parsed_items, preferences, raw, recipe, suggestion = parse_text(text)
+) -> Tuple[AISearchResponse, Optional[SearchSuggestion]]:
+    intent, parsed_items, preferences, raw, recipe, suggestion = parsed
 
     item_results = []
     total_best = Decimal("0")
@@ -88,7 +128,11 @@ def _build_normal_search_response(
             limit=limit_per_item,
             cheapest_first=True,
         )
+
+        opts = opts[:limit_per_item]
+
         best = opts[0] if opts else None
+
         if best:
             total_best += best.line_total
 
@@ -110,17 +154,17 @@ def _build_normal_search_response(
             estimated_total_best=total_best,
             recipe=recipe,
         ),
-        suggestion,
+        _suggestion_to_schema(suggestion),
     )
 
 
-def _build_recipe_search_response(
-    text: str,
+def _build_recipe_search_response_from_parsed(
+    parsed: ParsedPayload,
     db: Session,
     limit_per_item: int,
     include_alternatives: bool = True,
-) -> Tuple[RecipeSearchResponse, Optional[Dict]]:
-    intent, parsed_items, preferences, raw, recipe, suggestion = parse_text(text)
+) -> Tuple[RecipeSearchResponse, Optional[SearchSuggestion]]:
+    intent, parsed_items, preferences, raw, recipe, suggestion = parsed
 
     if intent != "recipe" or recipe is None:
         raise HTTPException(
@@ -128,43 +172,11 @@ def _build_recipe_search_response(
             detail="The provided text was not recognized as a recipe request",
         )
 
-    local_recipe_def = find_recipe(recipe.name)
-
     items_out = []
     estimated_total = Decimal("0")
     found_count = 0
 
-    if local_recipe_def:
-        ingredient_defs = local_recipe_def["ingredients"]
-    else:
-        ingredient_defs = []
-        for idx, parsed_item in enumerate(parsed_items):
-            ingredient_defs.append(
-                {
-                    "key": f"llm_{idx+1}",
-                    "display_name": parsed_item.query.title(),
-                    "search_queries": [parsed_item.query],
-                    "required": True,
-                }
-            )
-
-    for idx, ingredient_def in enumerate(ingredient_defs):
-        parsed_item = parsed_items[idx] if idx < len(parsed_items) else None
-        if not parsed_item:
-            items_out.append(
-                RecipeIngredientResult(
-                    ingredient_key=ingredient_def["key"],
-                    ingredient_name=ingredient_def["display_name"],
-                    query=ingredient_def["search_queries"][0],
-                    qty=Decimal("1"),
-                    required=bool(ingredient_def.get("required", True)),
-                    selected_option=None,
-                    alternatives=[],
-                    found=False,
-                )
-            )
-            continue
-
+    for idx, parsed_item in enumerate(parsed_items):
         opts = search_options(
             db=db,
             query=parsed_item.query,
@@ -173,10 +185,7 @@ def _build_recipe_search_response(
             cheapest_first=True,
         )
 
-        opts = [
-            opt for opt in opts
-            if not _is_bad_match_for_query(parsed_item.query, opt.product)
-        ][:limit_per_item]
+        opts = opts[:limit_per_item]
 
         selected = opts[0] if opts else None
         alternatives = opts if include_alternatives else []
@@ -187,11 +196,11 @@ def _build_recipe_search_response(
 
         items_out.append(
             RecipeIngredientResult(
-                ingredient_key=ingredient_def["key"],
-                ingredient_name=ingredient_def["display_name"],
+                ingredient_key=_ingredient_key(parsed_item.query, idx),
+                ingredient_name=_ingredient_display_name(parsed_item.query),
                 query=parsed_item.query,
                 qty=_to_decimal(parsed_item.qty),
-                required=bool(ingredient_def.get("required", True)),
+                required=True,
                 selected_option=(
                     RecipeIngredientOption(**selected.model_dump()) if selected else None
                 ),
@@ -218,18 +227,47 @@ def _build_recipe_search_response(
             summary=summary,
             items=items_out,
         ),
-        suggestion,
+        _suggestion_to_schema(suggestion),
+    )
+
+
+def _build_normal_search_response(
+    text: str,
+    db: Session,
+    limit_per_item: int,
+) -> Tuple[AISearchResponse, Optional[SearchSuggestion]]:
+    parsed = parse_text(text)
+    return _build_normal_search_response_from_parsed(
+        parsed=parsed,
+        db=db,
+        limit_per_item=limit_per_item,
+    )
+
+
+def _build_recipe_search_response(
+    text: str,
+    db: Session,
+    limit_per_item: int,
+    include_alternatives: bool = True,
+) -> Tuple[RecipeSearchResponse, Optional[SearchSuggestion]]:
+    parsed = parse_text(text)
+    return _build_recipe_search_response_from_parsed(
+        parsed=parsed,
+        db=db,
+        limit_per_item=limit_per_item,
+        include_alternatives=include_alternatives,
     )
 
 
 @router.get("/health", response_model=AIHealthResponse)
 def ai_health():
     health = openai_health()
+
     return AIHealthResponse(
         ai_router_ok=True,
         openai_configured=health["openai_configured"],
         openai_model=health["openai_model"],
-        strategy="local_correction_then_recipe_bias_then_llm_recipe_generation",
+        strategy="fast_product_search_then_recipe_modifiers_then_llm_fallback",
     )
 
 
@@ -260,6 +298,7 @@ def debug_understand(payload: ParseQueryRequest):
 @router.post("/parse-query", response_model=ParseQueryResponse)
 def parse_query(payload: ParseQueryRequest):
     intent, items, preferences, raw, recipe, _ = parse_text(payload.text)
+
     return ParseQueryResponse(
         intent=intent,
         items=items,
@@ -292,32 +331,15 @@ def recipe_search(payload: RecipeSearchRequest, db: Session = Depends(get_db)):
 
 @router.post("/search-smart", response_model=SmartSearchResponse)
 def search_smart(payload: RecipeSearchRequest, db: Session = Depends(get_db)):
-    intent, _, _, _, recipe, suggestion = parse_text(payload.text)
-
-    suggestion_obj = (
-        SearchSuggestion(
-            original=suggestion["original"],
-            corrected=suggestion["corrected"],
-        )
-        if suggestion
-        else None
-    )
+    parsed = parse_text(payload.text)
+    intent, _, _, _, recipe, _ = parsed
 
     if intent == "recipe" or recipe is not None:
-        recipe_data, suggestion = _build_recipe_search_response(
-            text=payload.text,
+        recipe_data, suggestion_obj = _build_recipe_search_response_from_parsed(
+            parsed=parsed,
             db=db,
             limit_per_item=payload.limit_per_item,
             include_alternatives=payload.include_alternatives,
-        )
-
-        suggestion_obj = (
-            SearchSuggestion(
-                original=suggestion["original"],
-                corrected=suggestion["corrected"],
-            )
-            if suggestion
-            else suggestion_obj
         )
 
         return SmartSearchRecipeResponse(
@@ -326,19 +348,10 @@ def search_smart(payload: RecipeSearchRequest, db: Session = Depends(get_db)):
             data=recipe_data,
         )
 
-    normal_data, suggestion = _build_normal_search_response(
-        text=payload.text,
+    normal_data, suggestion_obj = _build_normal_search_response_from_parsed(
+        parsed=parsed,
         db=db,
         limit_per_item=payload.limit_per_item,
-    )
-
-    suggestion_obj = (
-        SearchSuggestion(
-            original=suggestion["original"],
-            corrected=suggestion["corrected"],
-        )
-        if suggestion
-        else suggestion_obj
     )
 
     return SmartSearchNormalResponse(
@@ -354,7 +367,9 @@ def ai_add_to_cart(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    intent, parsed_items, preferences, raw, recipe, _ = parse_text(payload.text)
+    parsed = parse_text(payload.text)
+    intent, parsed_items, preferences, raw, recipe, _ = parsed
+
     cart = _get_or_create_active_cart(db, user_id=current_user.id)
 
     added = []
@@ -369,7 +384,11 @@ def ai_add_to_cart(
             limit=payload.limit_per_item,
             cheapest_first=True,
         )
+
+        opts = opts[:limit_per_item]
+
         best = opts[0] if opts else None
+
         if not best:
             not_found.append(
                 NotFoundLine(
@@ -385,6 +404,7 @@ def ai_add_to_cart(
             .filter(SupermarketProductPrice.supermarket_product_id == best.supermarket_product_id)
             .first()
         )
+
         unit_price = _to_decimal(price_row.price) if price_row else best.unit_price
         cart_qty = best.purchase_qty
 
@@ -458,6 +478,7 @@ def recipe_add_to_cart(
             .filter(SupermarketProduct.id == sel.supermarket_product_id)
             .first()
         )
+
         if not supermarket_product:
             raise HTTPException(
                 status_code=404,
@@ -475,6 +496,7 @@ def recipe_add_to_cart(
             .filter(SupermarketProductPrice.supermarket_product_id == supermarket_product.id)
             .first()
         )
+
         if not price_row:
             raise HTTPException(
                 status_code=409,

@@ -1,3 +1,4 @@
+# backend/app/ai/service.py
 from __future__ import annotations
 
 import difflib
@@ -7,22 +8,37 @@ from decimal import Decimal
 from typing import Dict, List, Optional, Tuple
 
 from backend.app.ai.schemas import ParsedItem, Preferences, RecipeMeta
-from backend.app.ai.tools.recipes import RECIPE_CATALOG, find_recipe, recipe_to_parsed_items
+from backend.app.ai.tools.recipes import (
+    RECIPE_CATALOG,
+    apply_recipe_modifiers,
+    find_recipe,
+    recipe_to_parsed_items,
+)
 from backend.app.core.llm import (
-    understand_query_with_llm,
     generate_recipe_ingredients_with_llm,
+    understand_query_with_llm,
 )
 
 
 _STOPWORDS = {
     "de", "del", "la", "las", "el", "los", "un", "una", "unos", "unas",
-    "para", "por", "con", "sin", "al", "a", "en", "y", "e", "o",
+    "para", "por", "al", "a", "en", "y", "e", "o",
     "que", "me", "mi", "mis", "tu", "tus", "su", "sus",
     "porfavor", "porfa", "favor",
     "mas", "más", "barato", "baratos", "barata", "baratas",
     "economico", "económico", "económicos",
     "mejor", "precio", "oferta", "ofertas",
-    "hacer", "hago", "cocinar", "preparar", "receta", "ingredientes",
+    "quiero", "quisiera", "necesito", "dame", "buscame", "búscame",
+    "agrega", "agregar", "añade", "anade", "pon", "poner",
+}
+
+_RECIPE_WORDS = {
+    "receta", "ingredientes", "hacer", "cocinar", "preparar",
+    "cocino", "cocinarme", "hazme",
+}
+
+_RECIPE_MODIFIER_CONNECTORS = {
+    "con", "sin", "de", "extra",
 }
 
 _ADD_TRIGGERS = [
@@ -48,6 +64,7 @@ COMMON_GROCERY_TERMS = [
     "arroz",
     "leche",
     "aceite",
+    "aceite vegetal",
     "sal",
     "azúcar",
     "azucar",
@@ -60,23 +77,53 @@ COMMON_GROCERY_TERMS = [
     "platano verde",
     "yuca",
     "auyama",
+    "yautía",
+    "yautia",
     "cilantro",
-    "longaniza",
-    "mazorca",
+    "orégano",
+    "oregano",
     "caldo de pollo",
-    "mantequilla",
-    "habichuelas",
-    "guandules",
     "sancocho",
     "mangú",
     "mangu",
-    "habichuelas con dulce",
-    "moro de guandules con coco",
     "asopao",
     "asopado de pollo",
     "locrio",
     "moro",
+    "moro de guandules",
+    "habichuelas con dulce",
+    "pastel en hoja",
+    "longaniza",
+    "salami",
+    "queso",
+    "tomate",
+    "lechuga",
+    "huevo",
+    "huevos",
+    "mantequilla",
+    "guandules",
+    "habichuelas",
 ]
+
+_SIMPLE_PRODUCT_HINTS = {
+    "arroz", "leche", "aceite", "sal", "azucar", "azúcar", "cebolla", "ajo",
+    "pollo", "cerdo", "res", "yuca", "auyama", "yautia", "yautía", "cilantro",
+    "longaniza", "mazorca", "maiz", "maíz", "mantequilla", "habichuelas",
+    "guandules", "queso", "huevo", "huevos", "tomate", "lechuga", "pasta",
+    "spaghetti", "espagueti", "limon", "limón", "platano", "plátano",
+}
+
+_PROTECTED_QUERIES = {
+    "caldo de pollo",
+    "pasta de tomate",
+    "aji cubanela",
+    "ají cubanela",
+    "aceite vegetal",
+    "queso de freir",
+    "queso de freír",
+    "carne de res",
+    "carne de cerdo",
+}
 
 
 def _norm(s: str) -> str:
@@ -98,18 +145,17 @@ def _normalize_for_match(text: str) -> str:
     return text
 
 
-def _slugify_key(text: str) -> str:
-    t = _normalize_for_match(text)
-    t = re.sub(r"[^a-z0-9\s]", " ", t)
-    t = re.sub(r"\s+", "_", t).strip("_")
-    return t or "ingredient"
-
-
-def _best_fuzzy_match(value: str, choices: List[str], cutoff: float = 0.82) -> Optional[str]:
+def _best_fuzzy_match(value: str, choices: List[str], cutoff: float = 0.75) -> Optional[str]:
     norm_value = _normalize_for_match(value)
     norm_map = {_normalize_for_match(c): c for c in choices}
 
-    matches = difflib.get_close_matches(norm_value, list(norm_map.keys()), n=1, cutoff=cutoff)
+    matches = difflib.get_close_matches(
+        norm_value,
+        list(norm_map.keys()),
+        n=1,
+        cutoff=cutoff,
+    )
+
     if not matches:
         return None
 
@@ -118,9 +164,11 @@ def _best_fuzzy_match(value: str, choices: List[str], cutoff: float = 0.82) -> O
 
 def _correct_common_phrase(text: str) -> Tuple[str, bool]:
     raw = _norm(text)
-    corrected = _best_fuzzy_match(raw, COMMON_GROCERY_TERMS, cutoff=0.8)
+    corrected = _best_fuzzy_match(raw, COMMON_GROCERY_TERMS, cutoff=0.75)
+
     if corrected and _normalize_for_match(corrected) != _normalize_for_match(raw):
         return corrected, True
+
     return raw, False
 
 
@@ -136,6 +184,7 @@ def _strip_prefixes(s: str) -> str:
         flags=re.IGNORECASE,
     ).strip()
     return s
+
 
 def _normalize_generated_recipe_query(query: str) -> str:
     q = _normalize_for_match(query)
@@ -153,44 +202,11 @@ def _normalize_generated_recipe_query(query: str) -> str:
         "aji cubanela": "aji cubanela",
         "cilantro ancho": "cilantro",
         "limon verde": "limon",
+        "aceite": "aceite vegetal",
+        "aceite vegetal": "aceite vegetal",
     }
 
     return replacements.get(q, _norm(query))
-
-
-def _is_bad_match_for_query(query: str, product_name: str) -> bool:
-    q = _normalize_for_match(query)
-    name = _normalize_for_match(product_name)
-
-    if q == "limon":
-        blocked_terms = [
-            "limonada",
-            "limoncello",
-            "chicharron",
-            "agua",
-            "bebida",
-            "jugo",
-            "te",
-            "refresco",
-        ]
-        return any(term in name for term in blocked_terms)
-
-    if q in {"caldo pollo", "caldo de pollo"}:
-        blocked_terms = [
-            "sopa",
-            "ramen",
-            "fideo",
-        ]
-        return any(term in name for term in blocked_terms)
-
-    if q in {"aji", "aji cubanela"}:
-        blocked_terms = [
-            "morron",
-        ]
-        return any(term in name for term in blocked_terms)
-
-    return False
-
 
 
 def _cleanup_product_phrase(s: str) -> str:
@@ -204,8 +220,14 @@ def _cleanup_product_phrase(s: str) -> str:
     s = re.sub(r"[^0-9a-zA-ZáéíóúÁÉÍÓÚñÑ\s]", " ", s)
     s = _norm(s)
 
+    protected_norm = {_normalize_for_match(x): x for x in _PROTECTED_QUERIES}
+    s_norm = _normalize_for_match(s)
+
+    if s_norm in protected_norm:
+        return protected_norm[s_norm]
+
     toks = [t for t in s.split(" ") if t]
-    toks2 = [t for t in toks if t.lower() not in _STOPWORDS]
+    toks2 = [t for t in toks if _normalize_for_match(t) not in _STOPWORDS]
     return _norm(" ".join(toks2))
 
 
@@ -235,6 +257,7 @@ def _extract_qty(raw: str) -> Tuple[str, Decimal]:
 
         num = m.group(1) if m.lastindex else m.group(0)
         num = num.replace(",", ".")
+
         try:
             qty = Decimal(num)
         except Exception:
@@ -243,7 +266,17 @@ def _extract_qty(raw: str) -> Tuple[str, Decimal]:
         start, end = m.span()
         s = (s[:start] + " " + s[end:]).strip()
         s = _norm(s)
-        return s, (qty if qty > 0 else Decimal("1"))
+        return s, qty if qty > 0 else Decimal("1")
+
+    m = re.match(r"^\s*(\d+(?:[.,]\d+)?)\s+(.+)$", s)
+    if m:
+        try:
+            qty = Decimal(m.group(1).replace(",", "."))
+        except Exception:
+            qty = Decimal("1")
+
+        rest = _norm(m.group(2))
+        return rest, qty if qty > 0 else Decimal("1")
 
     return s, Decimal("1")
 
@@ -258,6 +291,7 @@ def _split_items(raw: str) -> List[str]:
             continue
 
         subs = re.split(r"\s+y\s+", chunk, flags=re.IGNORECASE)
+
         for s in subs:
             s = s.strip()
             if s:
@@ -269,24 +303,39 @@ def _split_items(raw: str) -> List[str]:
 def _to_decimal_qty(v) -> Decimal:
     if v is None:
         return Decimal("1")
+
     if isinstance(v, Decimal):
         return v
+
     try:
         return Decimal(str(v))
     except Exception:
         return Decimal("1")
 
 
-def _fuzzy_match_recipe_alias(raw: str):
-    candidate = _normalize_for_match(raw)
+def _recipe_alias_map() -> Dict[str, Dict]:
+    alias_map: Dict[str, Dict] = {}
 
-    alias_map = {}
     for recipe in RECIPE_CATALOG.values():
         aliases = [recipe["key"], recipe["display_name"], *recipe["aliases"]]
+
         for alias in aliases:
             alias_map[_normalize_for_match(alias)] = recipe
 
-    matches = difflib.get_close_matches(candidate, list(alias_map.keys()), n=1, cutoff=0.78)
+    return alias_map
+
+
+def _fuzzy_match_recipe_alias(raw: str):
+    candidate = _normalize_for_match(raw)
+    alias_map = _recipe_alias_map()
+
+    matches = difflib.get_close_matches(
+        candidate,
+        list(alias_map.keys()),
+        n=1,
+        cutoff=0.72,
+    )
+
     if not matches:
         return None
 
@@ -294,8 +343,8 @@ def _fuzzy_match_recipe_alias(raw: str):
 
 
 def _find_recipe_from_free_text(raw: str):
-    raw_norm = _norm(raw).lower()
-    cleaned = _cleanup_product_phrase(raw).lower()
+    raw_norm = _normalize_for_match(raw)
+    cleaned = _normalize_for_match(_cleanup_product_phrase(raw))
 
     candidates = {
         raw_norm,
@@ -303,32 +352,40 @@ def _find_recipe_from_free_text(raw: str):
         raw_norm.replace("quiero un ", "").strip(),
         raw_norm.replace("quiero una ", "").strip(),
         raw_norm.replace("quiero hacer ", "").strip(),
+        raw_norm.replace("quiero cocinar ", "").strip(),
         raw_norm.replace("receta de ", "").strip(),
         raw_norm.replace("ingredientes para ", "").strip(),
+        raw_norm.replace("ingredientes de ", "").strip(),
+        raw_norm.replace("como hacer ", "").strip(),
+        raw_norm.replace("cómo hacer ", "").strip(),
     }
 
     for candidate in candidates:
         if not candidate:
             continue
+
         recipe = find_recipe(candidate)
         if recipe:
             return recipe
 
-    for recipe in RECIPE_CATALOG.values():
-        aliases = [recipe["key"], recipe["display_name"], *recipe["aliases"]]
-        for alias in aliases:
-            alias_norm = _norm(alias).lower()
-            for candidate in candidates:
-                if not candidate:
-                    continue
-                if candidate == alias_norm:
-                    return recipe
-                if f" {alias_norm} " in f" {candidate} ":
-                    return recipe
-                if candidate.endswith(alias_norm):
-                    return recipe
-                if alias_norm.endswith(candidate) and len(candidate) >= 4:
-                    return recipe
+    alias_map = _recipe_alias_map()
+
+    for alias_norm, recipe in alias_map.items():
+        for candidate in candidates:
+            if not candidate:
+                continue
+
+            if candidate == alias_norm:
+                return recipe
+
+            if f" {alias_norm} " in f" {candidate} ":
+                return recipe
+
+            if candidate.startswith(alias_norm + " "):
+                return recipe
+
+            if candidate.endswith(" " + alias_norm):
+                return recipe
 
     fuzzy_recipe = _fuzzy_match_recipe_alias(raw)
     if fuzzy_recipe:
@@ -344,16 +401,19 @@ def _generated_recipe_to_parsed_items(generated: Dict) -> List[ParsedItem]:
         "caldo de pollo",
         "pasta de tomate",
         "aji cubanela",
+        "aceite vegetal",
+        "carne de cerdo",
+        "carne de res",
     }
+
+    protected_norms = {_normalize_for_match(x) for x in protected_queries}
 
     for ing in generated.get("ingredients", []):
         raw_query = str(ing.get("query", ""))
         normalized_query = _normalize_generated_recipe_query(raw_query)
         qty = _to_decimal_qty(ing.get("qty", 1))
 
-        if _normalize_for_match(normalized_query) in {
-            _normalize_for_match(x) for x in protected_queries
-        }:
+        if _normalize_for_match(normalized_query) in protected_norms:
             query = _norm(normalized_query)
         else:
             query = _cleanup_product_phrase(normalized_query)
@@ -366,6 +426,128 @@ def _generated_recipe_to_parsed_items(generated: Dict) -> List[ParsedItem]:
 
     return items
 
+
+def _looks_like_direct_product_search(raw: str) -> bool:
+    value = _normalize_for_match(raw)
+    tokens = value.split()
+
+    if not value:
+        return False
+
+    if any(w in value for w in _RECIPE_WORDS):
+        return False
+
+    if any(conn in tokens for conn in _RECIPE_MODIFIER_CONNECTORS) and len(tokens) >= 3:
+        return False
+
+    if len(tokens) <= 3:
+        cleaned = _cleanup_product_phrase(raw)
+        cleaned_norm = _normalize_for_match(cleaned)
+
+        if cleaned_norm in {_normalize_for_match(x) for x in COMMON_GROCERY_TERMS}:
+            return True
+
+        if any(tok in _SIMPLE_PRODUCT_HINTS for tok in tokens):
+            return True
+
+        fuzzy = _best_fuzzy_match(cleaned, COMMON_GROCERY_TERMS, cutoff=0.80)
+
+        if fuzzy and _normalize_for_match(fuzzy) in {
+            _normalize_for_match(x) for x in COMMON_GROCERY_TERMS
+        }:
+            return True
+
+    return False
+
+
+def _extract_recipe_base_and_modifiers(raw: str, recipe_def: Dict) -> Tuple[List[str], List[str]]:
+    value = _normalize_for_match(raw)
+
+    aliases = [recipe_def["key"], recipe_def["display_name"], *recipe_def["aliases"]]
+    aliases_norm = sorted(
+        {_normalize_for_match(alias) for alias in aliases},
+        key=len,
+        reverse=True,
+    )
+
+    rest = value
+
+    for alias in aliases_norm:
+        rest = rest.replace(alias, " ")
+
+    rest = re.sub(
+        r"\b(quiero|quisiera|hacer|cocinar|preparar|receta|ingredientes|para|personas|porciones)\b",
+        " ",
+        rest,
+    )
+    rest = re.sub(r"\b\d+\b", " ", rest)
+    rest = _norm(rest)
+
+    add_terms: List[str] = []
+    remove_terms: List[str] = []
+
+    for m in re.finditer(r"\bsin\s+([a-záéíóúñ ]+?)(?=\bcon\b|\bextra\b|$)", value):
+        term = _cleanup_product_phrase(m.group(1))
+        if term:
+            remove_terms.append(term)
+
+    for m in re.finditer(r"\b(con|de|extra)\s+([a-záéíóúñ ]+?)(?=\bsin\b|\bcon\b|\bextra\b|$)", value):
+        term = _cleanup_product_phrase(m.group(2))
+        if term:
+            add_terms.append(term)
+
+    if not add_terms and not remove_terms and rest:
+        possible = _cleanup_product_phrase(rest)
+        if possible and _normalize_for_match(possible) not in _STOPWORDS:
+            add_terms.append(possible)
+
+    return add_terms, remove_terms
+
+
+def _parse_shopping_without_llm(
+    raw_for_understanding: str,
+    low: str,
+    preferences: Preferences,
+) -> Tuple[str, List[ParsedItem]]:
+    intent = "search"
+
+    if any(t in low for t in _ADD_TRIGGERS):
+        intent = "add_to_cart"
+
+    if preferences.cheapest:
+        intent = "best_price"
+
+    segments = _split_items(raw_for_understanding)
+    parsed: List[ParsedItem] = []
+
+    for seg in segments:
+        seg2 = _strip_prefixes(seg)
+        without_qty, qty = _extract_qty(seg2)
+        q = _cleanup_product_phrase(without_qty)
+
+        if not q:
+            q = _cleanup_product_phrase(seg)
+
+        corrected_q, was_corrected = _correct_common_phrase(q)
+
+        if was_corrected:
+            q = corrected_q
+
+        if q:
+            parsed.append(ParsedItem(query=q, qty=qty))
+
+    if not parsed:
+        q = _cleanup_product_phrase(raw_for_understanding)
+        corrected_q, was_corrected = _correct_common_phrase(q)
+
+        if was_corrected:
+            q = corrected_q
+
+        parsed = [ParsedItem(query=q or raw_for_understanding, qty=Decimal("1"))]
+
+    return intent, parsed
+
+
 def parse_text(
     text: str,
 ) -> Tuple[str, List[ParsedItem], Preferences, str, Optional[RecipeMeta], Optional[dict]]:
@@ -373,9 +555,10 @@ def parse_text(
 
     corrected_raw, corrected = _correct_common_phrase(raw)
     raw_for_understanding = corrected_raw if corrected else raw
-    low = raw_for_understanding.lower()
+    low = _normalize_for_match(raw_for_understanding)
 
     suggestion = None
+
     if corrected and _normalize_for_match(corrected_raw) != _normalize_for_match(raw):
         suggestion = {
             "original": raw,
@@ -388,23 +571,60 @@ def parse_text(
         pickup=("pickup" in low or "recoger" in low),
     )
 
+    # 1) Receta conocida / receta conocida con modificadores, sin LLM.
+    # Va ANTES del fast path para que "sancocho", "sancoho", "manguu", "asopao"
+    # no caigan como búsqueda normal de producto.
     recipe_def = _find_recipe_from_free_text(raw_for_understanding)
+
     if recipe_def:
         servings = _extract_servings(low) or recipe_def["default_servings"]
-        items = recipe_to_parsed_items(recipe_def, servings=servings)
+        add_terms, remove_terms = _extract_recipe_base_and_modifiers(
+            raw_for_understanding,
+            recipe_def,
+        )
+
+        modified_recipe = apply_recipe_modifiers(
+            recipe_def,
+            add_terms=add_terms,
+            remove_terms=remove_terms,
+        )
+
+        items = recipe_to_parsed_items(modified_recipe, servings=servings)
 
         recipe = RecipeMeta(
-            name=recipe_def["display_name"],
+            name=modified_recipe["display_name"],
             servings=servings,
             source="heuristic",
             needs_confirmation=False,
         )
+
         return "recipe", items, preferences, raw_for_understanding, recipe, suggestion
 
+    # 2) Fast path: producto simple sin LLM.
+    if _looks_like_direct_product_search(raw_for_understanding):
+        intent, parsed = _parse_shopping_without_llm(
+            raw_for_understanding,
+            low,
+            preferences,
+        )
+        return intent, parsed, preferences, raw_for_understanding, None, suggestion
+
+    # 3) Lista simple de productos, sin LLM.
+    if "," in raw_for_understanding or " y " in f" {low} ":
+        if not any(w in low for w in _RECIPE_WORDS):
+            intent, parsed = _parse_shopping_without_llm(
+                raw_for_understanding,
+                low,
+                preferences,
+            )
+            return intent, parsed, preferences, raw_for_understanding, None, suggestion
+
+    # 4) LLM solo para intención abierta, ambigua o receta no registrada.
     try:
         data = understand_query_with_llm(raw_for_understanding)
 
         llm_prefs = data.get("preferences") or {}
+
         preferences = Preferences(
             cheapest=bool(llm_prefs.get("cheapest", preferences.cheapest)),
             delivery=bool(llm_prefs.get("delivery", preferences.delivery)),
@@ -416,31 +636,60 @@ def parse_text(
             servings = int(data.get("servings") or _extract_servings(low) or 4)
 
             recipe_def = find_recipe(recipe_name)
+
             if recipe_def:
-                items = recipe_to_parsed_items(recipe_def, servings=servings)
+                add_terms, remove_terms = _extract_recipe_base_and_modifiers(
+                    raw_for_understanding,
+                    recipe_def,
+                )
+
+                modified_recipe = apply_recipe_modifiers(
+                    recipe_def,
+                    add_terms=add_terms,
+                    remove_terms=remove_terms,
+                )
+
+                items = recipe_to_parsed_items(modified_recipe, servings=servings)
+
                 recipe = RecipeMeta(
-                    name=recipe_def["display_name"],
+                    name=modified_recipe["display_name"],
                     servings=servings,
                     source="llm",
                     needs_confirmation=False,
                 )
+
                 return "recipe", items, preferences, raw_for_understanding, recipe, suggestion
 
             fuzzy_recipe = _fuzzy_match_recipe_alias(recipe_name)
+
             if fuzzy_recipe:
-                items = recipe_to_parsed_items(fuzzy_recipe, servings=servings)
+                add_terms, remove_terms = _extract_recipe_base_and_modifiers(
+                    raw_for_understanding,
+                    fuzzy_recipe,
+                )
+
+                modified_recipe = apply_recipe_modifiers(
+                    fuzzy_recipe,
+                    add_terms=add_terms,
+                    remove_terms=remove_terms,
+                )
+
+                items = recipe_to_parsed_items(modified_recipe, servings=servings)
+
                 recipe = RecipeMeta(
-                    name=fuzzy_recipe["display_name"],
+                    name=modified_recipe["display_name"],
                     servings=servings,
                     source="llm",
                     needs_confirmation=False,
                 )
+
                 return "recipe", items, preferences, raw_for_understanding, recipe, suggestion
 
             generated = generate_recipe_ingredients_with_llm(
                 recipe_name=recipe_name,
                 servings=servings,
             )
+
             items = _generated_recipe_to_parsed_items(generated)
 
             recipe = RecipeMeta(
@@ -449,12 +698,20 @@ def parse_text(
                 source="llm",
                 needs_confirmation=False if items else True,
             )
+
             return "recipe", items, preferences, raw_for_understanding, recipe, suggestion
 
         parsed: List[ParsedItem] = []
+
         for item in data.get("items", []):
             query = _cleanup_product_phrase(str(item.get("query", "")))
+            corrected_query, was_corrected = _correct_common_phrase(query)
+
+            if was_corrected:
+                query = corrected_query
+
             qty = _to_decimal_qty(item.get("qty", 1))
+
             if query:
                 parsed.append(ParsedItem(query=query, qty=qty))
 
@@ -464,25 +721,11 @@ def parse_text(
     except Exception:
         pass
 
-    intent = "search"
-    if any(t in low for t in _ADD_TRIGGERS):
-        intent = "add_to_cart"
-
-    segments = _split_items(raw_for_understanding)
-    parsed: List[ParsedItem] = []
-
-    for seg in segments:
-        seg2 = _strip_prefixes(seg)
-        without_qty, qty = _extract_qty(seg2)
-        q = _cleanup_product_phrase(without_qty)
-        if not q:
-            q = _cleanup_product_phrase(seg)
-
-        if q:
-            parsed.append(ParsedItem(query=q, qty=qty))
-
-    if not parsed:
-        q = _cleanup_product_phrase(raw_for_understanding)
-        parsed = [ParsedItem(query=q or raw_for_understanding, qty=Decimal("1"))]
+    # 5) Fallback final sin LLM.
+    intent, parsed = _parse_shopping_without_llm(
+        raw_for_understanding,
+        low,
+        preferences,
+    )
 
     return intent, parsed, preferences, raw_for_understanding, None, suggestion
