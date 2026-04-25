@@ -394,3 +394,4 @@ __pycache__/
 # Mac / Windows basura
 .DS_Store
 Thumbs.db
+/frontend/.env
