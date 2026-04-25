@@ -119,7 +119,6 @@ function TrackingMap(props: {
             if (!googleMapsConfigured) {
                 setOptions({
                     key: apiKey,
-                    version: "weekly",
                 });
 
                 googleMapsConfigured = true;
@@ -168,7 +167,7 @@ function TrackingMap(props: {
                     destination: props.cliente,
                     travelMode: google.maps.TravelMode.DRIVING,
                 },
-                (result, status) => {
+                (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
                     if (cancelled) return;
 
                     if (status === "OK" && result) {
