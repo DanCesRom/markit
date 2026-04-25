@@ -301,9 +301,9 @@ export default function Profile() {
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
-              Markit Plus
+              Markit+
             </div>
-            <div className="mt-2 text-2xl font-bold">Prueba Markit Plus gratis</div>
+            <div className="mt-2 text-2xl font-bold">Prueba Markit+ gratis</div>
             <div className="mt-2 max-w-[28rem] text-sm leading-5 text-emerald-50/95">
               Banner de membresía de marcador de posición para beneficios de entrega gratuita, promociones especiales y más.
             </div>

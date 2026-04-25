@@ -75,6 +75,7 @@ function EmptyCartBackground() {
     );
 }
 
+
 export default function Cart() {
     const navigate = useNavigate();
 
@@ -173,6 +174,21 @@ export default function Cart() {
             setBusyId(null);
         }
     }
+
+    async function clearCart() {
+        setErr(null);
+        setBusyId(-1);
+
+        try {
+            await apiDelete("/cart");
+            await refresh();
+        } catch (e: any) {
+            setErr(e?.message ?? "No pude vaciar el carrito");
+        } finally {
+            setBusyId(null);
+        }
+    }
+
 
     if (loading) {
         return (
@@ -376,7 +392,14 @@ export default function Cart() {
             >
                 Seguir comprando
             </button>
-
+            <br />
+            <button
+                onClick={clearCart}
+                disabled={busyId !== null}
+                className="mt-3 w-full rounded-2xl border border-red-600 bg-white py-3 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
+            >
+                Vaciar carrito
+            </button>
             <div className="fixed bottom-14 left-0 right-0 z-40">
                 <div className="mx-auto w-full max-w-[430px] border-t bg-emerald-50 px-4 py-3">
                     <div className="flex items-center justify-between gap-3">

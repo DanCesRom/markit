@@ -258,6 +258,35 @@ def update_cart_item(
     return {"message": "Item updated", "cart_item_id": item.id, "quantity": item.quantity}
 
 
+
+@router.delete("")
+def clear_cart(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    user_id = current_user.id
+
+    cart = (
+        db.query(Cart)
+        .filter(Cart.user_id == user_id, Cart.status == "active")
+        .first()
+    )
+
+    if not cart:
+        return {"message": "Cart already empty", "deleted": 0}
+
+    deleted = (
+        db.query(CartItem)
+        .filter(CartItem.cart_id == cart.id)
+        .delete(synchronize_session=False)
+    )
+
+    db.commit()
+
+    return {"message": "Cart cleared", "deleted": deleted}
+
+
+
 @router.delete("/items/{cart_item_id}")
 def delete_cart_item(
     cart_item_id: int,
