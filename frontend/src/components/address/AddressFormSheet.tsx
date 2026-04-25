@@ -123,7 +123,7 @@ async function geocodeAddress(query: string): Promise<GoogleGeocodeResult | null
                 address: `${q}, Dominican Republic`,
                 region: "DO",
             },
-            (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
+            (results: google.maps.GeocoderResult[] | null, status: string) => {
                 if (status === "OK" && results?.[0]) {
                     resolve(parseGoogleAddress(results[0]));
                     return;
@@ -149,7 +149,7 @@ async function reverseGeocode(
                 location: { lat, lng },
                 region: "DO",
             },
-            (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
+            (results: google.maps.GeocoderResult[] | null, status: string) => {
                 if (status === "OK" && results?.[0]) {
                     resolve(parseGoogleAddress(results[0]));
                     return;

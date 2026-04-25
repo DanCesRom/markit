@@ -167,7 +167,7 @@ function TrackingMap(props: {
                     destination: props.cliente,
                     travelMode: google.maps.TravelMode.DRIVING,
                 },
-                (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
+                (result: google.maps.DirectionsResult | null, status: string) => {
                     if (cancelled) return;
 
                     if (status === "OK" && result) {
