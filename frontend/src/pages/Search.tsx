@@ -221,6 +221,28 @@ function getPreviewLabel(productName: string) {
     return parts.slice(0, 3).join(" ");
 }
 
+function looksLikeRecipeQuery(text: string) {
+    const value = text.toLowerCase();
+    return [
+        "receta",
+        "quiero hacer",
+        "quiero cocinar",
+        "cómo hacer",
+        "como hacer",
+        "cocinar",
+        "sancocho",
+        "mangú",
+        "mangu",
+        "mofongo",
+        "lasaña",
+        "pastelón",
+        "pastelon",
+        "asopao",
+        "locro",
+        "moro",
+    ].some((x) => value.includes(x));
+}
+
 function SearchTopBar(props: {
     value: string;
     onChange: (v: string) => void;
@@ -278,7 +300,25 @@ function SearchTopBar(props: {
                         onChange={(e) => props.onChange(e.target.value)}
                         placeholder="Buscar productos o recetas"
                         className="w-full bg-transparent outline-none"
+                        enterKeyHint="search"
+                        autoCapitalize="sentences"
+                        autoCorrect="on"
+                        spellCheck
                     />
+
+                    {props.value.trim() && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                props.onChange("");
+                                inputRef.current?.focus({ preventScroll: true });
+                            }}
+                            className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-500 transition hover:bg-zinc-200 active:scale-95"
+                            aria-label="Limpiar búsqueda"
+                        >
+                            ×
+                        </button>
+                    )}
                 </div>
             </div>
         </form>
@@ -312,14 +352,39 @@ function SearchSectionHeader(props: {
     );
 }
 
-function SearchLoadingState() {
+function SearchLoadingState(props: { query: string }) {
+    const isRecipe = looksLikeRecipeQuery(props.query);
+
     return (
-        <div className="rounded-[28px] border p-5">
-            <div className="text-sm text-zinc-500">Buscando...</div>
+        <div className="rounded-[28px] border border-emerald-100 bg-white p-5 shadow-sm">
+            <div className="flex items-start gap-4">
+                <div className="relative mt-1 h-12 w-12 shrink-0">
+                    <div className="absolute inset-0 rounded-full border-4 border-emerald-100" />
+                    <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-emerald-600" />
+                    <div className="absolute inset-[10px] rounded-full bg-emerald-50" />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                    <div className="text-base font-semibold text-zinc-950">
+                        {isRecipe ? "Preparando tu receta" : "Buscando los mejores productos"}
+                    </div>
+
+                    <div className="mt-1 text-sm leading-6 text-zinc-500">
+                        {isRecipe
+                            ? "Buscando ingredientes, revisando opciones y armando una selección más conveniente para ti."
+                            : "Comparando resultados, disponibilidad y alternativas para mostrarte una mejor selección."}
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                        <div className="h-3 w-[78%] animate-pulse rounded-full bg-zinc-100" />
+                        <div className="h-3 w-[62%] animate-pulse rounded-full bg-zinc-100" />
+                        <div className="h-3 w-[70%] animate-pulse rounded-full bg-zinc-100" />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
-
 function QuickSuggestions(props: { onPick: (value: string) => void }) {
     const items = ["arroz", "leche", "pollo", "sancocho"];
 
@@ -1368,7 +1433,7 @@ export default function Search() {
                     </div>
                 )}
 
-                {mode === "loading" && <SearchLoadingState />}
+                { mode === "loading" && <SearchLoadingState query={q} />}
 
                 {mode === "empty" && (
                     <SearchEmptyState

@@ -14,6 +14,7 @@ import sirenaWide from "../assets/supermarket/sirena3x4.svg";
 import avatarImg from "../assets/home/avatar.png";
 import mapPinIcon from "../assets/home/map-pin.svg";
 import findIcon from "../assets/home/find.png";
+import markitPlusBanner from "../assets/banners/markit-plus.png";
 
 type MeResponse = {
     id?: number;
@@ -964,34 +965,14 @@ function HomeSearchOverlay(props: {
 
 function PromoBanner() {
     return (
-        <section className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-emerald-50 p-5">
-            <div
-                className="absolute inset-0 opacity-40"
-                style={{
-                    backgroundImage:
-                        "radial-gradient(circle at 20% 20%, rgba(16,185,129,0.25) 0 20%, transparent 21%), radial-gradient(circle at 80% 70%, rgba(16,185,129,0.20) 0 22%, transparent 23%)",
-                }}
+        <section className="rounded-3xl overflow-hidden border border-emerald-100 shadow-sm">
+            <img
+                src={markitPlusBanner}
+                alt="Markit Plus"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                draggable={false}
             />
-
-            <div className="relative flex items-center gap-4">
-                <div className="flex-1">
-                    <div className="text-lg font-semibold text-emerald-700">New Member</div>
-                    <div className="mt-1 text-sm font-medium text-zinc-800">
-                        Discount <span className="text-2xl font-semibold text-red-500">50%</span>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="mt-4 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white"
-                    >
-                        Buy Now
-                    </button>
-                </div>
-
-                <div className="grid h-24 w-32 place-items-center rounded-2xl bg-white/70 text-4xl">
-                    🥗
-                </div>
-            </div>
         </section>
     );
 }
