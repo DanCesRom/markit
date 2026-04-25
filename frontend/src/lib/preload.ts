@@ -1,4 +1,4 @@
-import { apiGet, apiGetCached } from "./api";
+import { apiGetCached } from "./api";
 import { isLoggedIn } from "./auth";
 
 import { NAV_ICONS } from "../config/navIcons";
