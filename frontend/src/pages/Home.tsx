@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiDelete, apiGet, apiPatch, apiPost } from "../lib/api";
+import { apiDelete, apiGet, apiGetCached, apiPatch, apiPost } from "../lib/api";
 import { isLoggedIn } from "../lib/auth";
 import type { Address } from "../lib/types";
 import AddressPickerSheet, {
@@ -1037,7 +1037,7 @@ export default function Home() {
             }
 
             try {
-                const data = await apiGet<MeResponse>("/auth/me");
+                const data = await apiGetCached<MeResponse>("/auth/me", { ttlMs: 1000 * 60 * 10 });
                 if (!active) return;
                 setMe(data);
             } catch {
@@ -1054,7 +1054,7 @@ export default function Home() {
     useEffect(() => {
         (async () => {
             try {
-                const list = await apiGet<Address[]>("/addresses");
+                const list = await apiGetCached<Address[]>("/addresses", { ttlMs: 1000 * 60 * 10 });
                 const chosen = pickActiveAddress(list);
                 if (chosen) {
                     setActiveAddress(chosen);
@@ -1069,7 +1069,9 @@ export default function Home() {
     useEffect(() => {
         (async () => {
             try {
-                const rows = await apiGet<SupermarketApiItem[]>("/supermarkets");
+                const rows = await apiGetCached<SupermarketApiItem[]>("/supermarkets", {
+                    ttlMs: 1000 * 60 * 30,
+                });
                 setSupermarkets(rows ?? []);
             } catch {
                 // ignore
@@ -1086,16 +1088,18 @@ export default function Home() {
 
             try {
                 setHomeErr(null);
-
+                
                 const [nacionalRes, sirenaRes] = await Promise.all([
                     nacionalId
-                        ? apiGet<PopularProductsResponse>(
-                            `/supermarkets/${nacionalId}/popular-products?limit=60`
+                        ? apiGetCached<PopularProductsResponse>(
+                            `/supermarkets/${nacionalId}/popular-products?limit=60`,
+                            { ttlMs: 1000 * 60 * 10 }
                         )
                         : Promise.resolve({ supermarket_id: 0, limit: 0, items: [] }),
                     sirenaId
-                        ? apiGet<PopularProductsResponse>(
-                            `/supermarkets/${sirenaId}/popular-products?limit=60`
+                        ? apiGetCached<PopularProductsResponse>(
+                            `/supermarkets/${sirenaId}/popular-products?limit=60`,
+                            { ttlMs: 1000 * 60 * 10 }
                         )
                         : Promise.resolve({ supermarket_id: 0, limit: 0, items: [] }),
                 ]);

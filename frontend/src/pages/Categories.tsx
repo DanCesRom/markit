@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiGet } from "../lib/api";
+import { apiGetCached } from "../lib/api";
 import { CATEGORY_ART, CATEGORY_ART_BY_MARKET } from "../config/categoryArt";
 import findIcon from "../assets/home/find.png";
 
@@ -78,7 +78,9 @@ export default function Categories() {
 
         async function run() {
             try {
-                const rows = await apiGet<Supermarket[]>("/supermarkets/");
+                const rows = await apiGetCached<Supermarket[]>("/supermarkets/", {
+                    ttlMs: 1000 * 60 * 30,
+                });
                 if (!alive) return;
 
                 setMarkets(rows);
@@ -111,8 +113,9 @@ export default function Categories() {
             setErr(null);
 
             try {
-                const rows = await apiGet<CategoryRow[]>(
-                    `/supermarkets/${marketId}/categories`
+                const rows = await apiGetCached<CategoryRow[]>(
+                    `/supermarkets/${marketId}/categories`,
+                    { ttlMs: 1000 * 60 * 30 }
                 );
                 if (!alive) return;
                 setCats(rows);
