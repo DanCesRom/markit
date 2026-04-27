@@ -1237,7 +1237,7 @@ export default function Home() {
         <>
             <div className="space-y-6">
                 <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
+                    <div className="flex min-w-0 items-start gap-3">
                         <img
                             src={avatarImg}
                             alt="User avatar"
@@ -1245,7 +1245,7 @@ export default function Home() {
                             draggable={false}
                         />
 
-                        <div className="leading-tight">
+                        <div className="min-w-0 leading-tight">
                             <div className="text-sm font-semibold text-zinc-600">
                                 Hola {firstName}
                             </div>
@@ -1258,12 +1258,12 @@ export default function Home() {
                     <button
                         type="button"
                         onClick={() => setAddressPickerOpen(true)}
-                        className="inline-flex max-w-[170px] items-center gap-2 rounded-full border border-emerald-200 bg-white px-4 py-2 text-left text-sm font-semibold text-emerald-700 shadow-sm"
+                        className="inline-flex min-w-[118px] max-w-[190px] shrink-0 items-center justify-center gap-2 rounded-full border border-emerald-200 bg-white px-4 py-2 text-left text-sm font-semibold text-emerald-700 shadow-sm"
                         aria-label="Choose address"
                         title={detailText || buttonText}
                     >
                         <img src={mapPinIcon} alt="Map" className="h-5 w-5 shrink-0" />
-                        <span className="truncate">{buttonText}</span>
+                        <span className="min-w-0 truncate">{buttonText}</span>
                     </button>
                 </div>
 
