@@ -281,19 +281,39 @@ export default function TrackOrder() {
     const isCompleted = currentStatus === "completed";
     const customerName = useMemo(() => getFirstNameFromMe(me), [me]);
 
+    const clienteCoords = useMemo<LatLngPoint>(() => {
+        // UNIBE fijo
+        return {
+            lat: 18.474756179065302,
+            lng: -69.90976164651842,
+        };
+    }, []);
+
     const supermercadoCoords = useMemo<LatLngPoint>(() => {
+        const name = (order?.supermarket_name ?? "").toLowerCase();
+
+        // La Sirena fijo
+        if (name.includes("sirena")) {
+            return {
+                lat: 18.472246,
+                lng: -69.938797,
+            };
+        }
+
+        // Nacional fijo
+        if (name.includes("nacional")) {
+            return {
+                lat: 18.502229,
+                lng: -69.943382,
+            };
+        }
+
+        // fallback por si no reconoce el supermercado
         return {
             lat: 18.502229,
             lng: -69.943382,
         };
-    }, []);
-
-    const clienteCoords = useMemo<LatLngPoint>(() => {
-        return {
-            lat: 18.506273,
-            lng: -70.002204,
-        };
-    }, []);
+    }, [order?.supermarket_name]);
 
     const eta = isCompleted
         ? 0
